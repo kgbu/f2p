@@ -257,11 +257,59 @@ class EntryController < ApplicationController
     @link = param(:link)
     @with_form = param(:with_form)
     @title = param(:title)
+
+    @lon = param(:lon)
     @lat = param(:lat)
-    @long = param(:long)
+
+    def calc_geo(m_s_sss)
+      sign = ""
+      if /([-\+])?(\d{1,3})\.(\d{1,2})\.(\d{1,2})\.(\d{1,3})/ =~ m_s_sss then
+        sign = $1
+        m_s_sss = (((($5.to_f/1000) + $4.to_f)/60 + $3.to_f)/60 + $2.to_f)
+        if sign == "-" then
+          (m_s_sss * -1 ).to_s
+        else
+          m_s_sss.to_s
+        end
+      else
+        m_s_sss
+      end
+    end
+ 
+    case @setting.use_gps_info
+    when 'ezweb', 'gpsone', 'DoCoMoFOMA' 
+      @lat = calc_geo(@lat)
+      @lon = calc_geo(@lon)
+    when 'DoCoMomova','SoftBank3G','WILLCOM'
+      if /\A([NS])([0-9\.]+)([EW])([0-9\.]+)\Z/ =~ param(:pos)
+        if $1 == 'N'
+          @lat = calc_geo($2)
+        else
+          @lat = calc_geo('-' + $2)
+        end
+        if $3 == 'E'
+          @lon = calc_geo($4)
+        else
+          @lon = calc_geo('-' + $4)
+        end
+      end
+    when 'SoftBankold'
+      if /\A(\d+) (\d+) / =~ (request.env['HTTP_X_JPHONE_GEOCODE']).to_s
+        @lat = $1
+        @lon = $2
+      end
+    end
+        
+    @long = param(:long) || @lon
     @address = param(:address)
     @placemark = nil
-    if @title
+    if @lon
+      geocoder = GoogleMaps::GoogleGeocoder.new(http_client, F2P::Config.google_maps_api_key)
+      @placemark = geocoder.reversesearch(@lat, @lon)
+      if @placemark and !@placemark.ambiguous?
+        @address = @placemark.address
+      end
+    elsif @title
       geocoder = GoogleMaps::GeocodingJpGeocoder.new(http_client)
       @placemark = geocoder.search(@title)
       if @placemark and !@placemark.ambiguous?

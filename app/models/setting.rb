@@ -5,6 +5,7 @@ class Setting
   attr_accessor :text_folding_size
   attr_accessor :link_open_new_window
   attr_accessor :link_type
+  attr_accessor :use_gps_info
   attr_accessor :list_view_media_rendering
 
   def initialize
@@ -15,6 +16,7 @@ class Setting
     @text_folding_size = F2P::Config.text_folding_size
     @link_open_new_window = F2P::Config.link_open_new_window
     @link_type = F2P::Config.link_type
+    @use_gps_info = F2P::Config.use_gps_info
     @list_view_media_rendering = F2P::Config.list_view_media_rendering
   end
 
@@ -31,6 +33,11 @@ class Setting
     end
     unless (20..1000) === @text_folding_size
       errors << 'text folding size must be in 20..1000'
+    end
+    if @use_gps_info
+      unless (['ezweb','gpsone','DoCoMoFOMA', 'DoCoMomova','SoftBank3G', 'SoftBankold','WILLCOM']).include?(@use_gps_info)
+      errors << 'gps type shall be one of ezweb, gpsone, DoCoMoFOMA, DoCoMomova,SoftBank3G, SoftBankold, WILLCOM'
+      end
     end
     errors.empty? ? nil : errors
   end
