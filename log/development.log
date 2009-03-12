@@ -1,0 +1,1253 @@
+# Logfile created on Fri Mar 13 05:37:19 +0900 2009  [4;36;1mSQL (0.6ms)[0m   [0;1m SELECT name
+ FROM sqlite_master
+ WHERE type = 'table' AND NOT name = 'sqlite_sequence'
+[0m
+  [4;35;1mSQL (0.2ms)[0m   [0mselect sqlite_version(*)[0m
+  [4;36;1mSQL (75.9ms)[0m   [0;1mCREATE TABLE "schema_migrations" ("version" varchar(255) NOT NULL) [0m
+  [4;35;1mSQL (15.4ms)[0m   [0mCREATE UNIQUE INDEX "unique_schema_migrations" ON "schema_migrations" ("version")[0m
+  [4;36;1mSQL (0.4ms)[0m   [0;1m SELECT name
+ FROM sqlite_master
+ WHERE type = 'table' AND NOT name = 'sqlite_sequence'
+[0m
+  [4;35;1mSQL (0.3ms)[0m   [0mSELECT version FROM schema_migrations[0m
+Migrating to CreateUsers (20090124133001)
+  [4;36;1mSQL (6.6ms)[0m   [0;1mCREATE TABLE "users" ("id" INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, "name" varchar(255) NOT NULL, "remote_key" varchar(255) NOT NULL, "created_at" datetime, "updated_at" datetime) [0m
+  [4;35;1mSQL (4.0ms)[0m   [0mINSERT INTO schema_migrations (version) VALUES ('20090124133001')[0m
+Migrating to CreateProfiles (20090210094718)
+  [4;36;1mSQL (6.2ms)[0m   [0;1mCREATE TABLE "profiles" ("id" INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, "font_size" integer, "entries_in_page" integer, "text_folding_size" integer, "created_at" datetime, "updated_at" datetime) [0m
+  [4;35;1mSQL (7.1ms)[0m   [0mINSERT INTO schema_migrations (version) VALUES ('20090210094718')[0m
+Migrating to AddUserToProfile (20090210102051)
+  [4;36;1mSQL (4.6ms)[0m   [0;1mALTER TABLE "profiles" ADD "user_id" integer[0m
+  [4;35;1mSQL (126.9ms)[0m   [0mVACUUM[0m
+  [4;36;1mSQL (49.8ms)[0m   [0;1mINSERT INTO schema_migrations (version) VALUES ('20090210102051')[0m
+Migrating to InsertProfileOfUser (20090210144137)
+  [4;35;1mUser Load (0.3ms)[0m   [0mSELECT * FROM "users" [0m
+  [4;36;1mSQL (64.7ms)[0m   [0;1mINSERT INTO schema_migrations (version) VALUES ('20090210144137')[0m
+Migrating to AddEntriesInThreadToProfile (20090212121807)
+  [4;35;1mSQL (46.5ms)[0m   [0mALTER TABLE "profiles" ADD "entries_in_thread" integer[0m
+  [4;36;1mSQL (73.5ms)[0m   [0;1mVACUUM[0m
+  [4;35;1mSQL (88.6ms)[0m   [0mINSERT INTO schema_migrations (version) VALUES ('20090212121807')[0m
+Migrating to CreateLastModifieds (20090214121607)
+  [4;36;1mSQL (40.0ms)[0m   [0;1mCREATE TABLE "last_modifieds" ("id" INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, "eid" varchar(255) NOT NULL, "date" datetime NOT NULL, "created_at" datetime, "updated_at" datetime) [0m
+  [4;35;1mSQL (70.2ms)[0m   [0mINSERT INTO schema_migrations (version) VALUES ('20090214121607')[0m
+Migrating to CreateCheckedModifieds (20090214121830)
+  [4;36;1mSQL (79.7ms)[0m   [0;1mCREATE TABLE "checked_modifieds" ("id" INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, "user_id" integer NOT NULL, "last_modified_id" integer NOT NULL, "checked" datetime, "created_at" datetime, "updated_at" datetime) [0m
+  [4;35;1mSQL (55.9ms)[0m   [0mINSERT INTO schema_migrations (version) VALUES ('20090214121830')[0m
+Migrating to CreateSessions (20090214222126)
+  [4;36;1mSQL (54.6ms)[0m   [0;1mCREATE TABLE "sessions" ("id" INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, "session_id" varchar(255) NOT NULL, "data" text, "created_at" datetime, "updated_at" datetime) [0m
+  [4;35;1mSQL (31.4ms)[0m   [0mCREATE INDEX "index_sessions_on_session_id" ON "sessions" ("session_id")[0m
+  [4;36;1mSQL (33.4ms)[0m   [0;1mCREATE INDEX "index_sessions_on_updated_at" ON "sessions" ("updated_at")[0m
+  [4;35;1mSQL (17.2ms)[0m   [0mINSERT INTO schema_migrations (version) VALUES ('20090214222126')[0m
+Migrating to DeleteProfiles (20090220130953)
+  [4;36;1mSQL (20.2ms)[0m   [0;1mDROP TABLE "profiles"[0m
+  [4;35;1mSQL (5.9ms)[0m   [0mINSERT INTO schema_migrations (version) VALUES ('20090220130953')[0m
+Migrating to AddUniqConstraintToUsers (20090224140917)
+  [4;36;1mUser Load (0.4ms)[0m   [0;1mselect * from users a where a.created_at != (select max(b.created_at) from users b where a.name = b.name)[0m
+  [4;35;1mUser Delete all (0.5ms)[0m   [0mDELETE FROM "users" WHERE ("users"."id" IN (NULL)) [0m
+  [4;36;1mSQL (39.9ms)[0m   [0;1mCREATE UNIQUE INDEX "index_users_on_name" ON "users" ("name")[0m
+  [4;35;1mSQL (21.9ms)[0m   [0mCREATE UNIQUE INDEX "index_last_modifieds_on_eid" ON "last_modifieds" ("eid")[0m
+  [4;36;1mSQL (22.6ms)[0m   [0;1mINSERT INTO schema_migrations (version) VALUES ('20090224140917')[0m
+Migrating to CreatePins (20090302110246)
+  [4;35;1mSQL (30.8ms)[0m   [0mCREATE TABLE "pins" ("id" INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, "user_id" integer NOT NULL, "eid" varchar(255) NOT NULL, "created_at" datetime, "updated_at" datetime) [0m
+  [4;36;1mSQL (7.0ms)[0m   [0;1mINSERT INTO schema_migrations (version) VALUES ('20090302110246')[0m
+  [4;35;1mSQL (0.5ms)[0m   [0m SELECT name
+ FROM sqlite_master
+ WHERE type = 'table' AND NOT name = 'sqlite_sequence'
+[0m
+  [4;36;1mSQL (0.6ms)[0m   [0;1mSELECT version FROM schema_migrations[0m
+  [4;35;1mSQL (0.5ms)[0m   [0m SELECT name
+ FROM sqlite_master
+ WHERE type = 'table' AND NOT name = 'sqlite_sequence'
+[0m
+  [4;36;1mSQL (0.1ms)[0m   [0;1mPRAGMA index_list("checked_modifieds")[0m
+  [4;35;1mSQL (0.2ms)[0m   [0mPRAGMA index_list("last_modifieds")[0m
+  [4;36;1mSQL (0.2ms)[0m   [0;1mPRAGMA index_info('index_last_modifieds_on_eid')[0m
+  [4;35;1mSQL (0.1ms)[0m   [0mPRAGMA index_list("pins")[0m
+  [4;36;1mSQL (0.3ms)[0m   [0;1mPRAGMA index_list("sessions")[0m
+  [4;35;1mSQL (0.2ms)[0m   [0mPRAGMA index_info('index_sessions_on_updated_at')[0m
+  [4;36;1mSQL (0.2ms)[0m   [0;1mPRAGMA index_info('index_sessions_on_session_id')[0m
+  [4;35;1mSQL (0.2ms)[0m   [0mPRAGMA index_list("users")[0m
+  [4;36;1mSQL (0.2ms)[0m   [0;1mPRAGMA index_info('index_users_on_name')[0m
+
+
+Processing EntryController#list (for 219.112.209.10 at 2009-03-13 05:39:28) [GET]
+  Session ID: 803996b807aa0e7141cefba46d9d0830
+Redirected to controllerloginactionindex
+Filter chain halted as [:login_required] rendered_or_redirected.
+Completed in 5ms (DB: 1) | 302 Found [http://b137053.ppp.asahi-net.or.jp/entry/list]
+
+
+Processing LoginController#index (for 219.112.209.10 at 2009-03-13 05:39:28) [GET]
+  Session ID: 803996b807aa0e7141cefba46d9d0830
+  Parameters: {"action"=>"index", "controller"=>"login"}
+Rendering template within layouts/login
+Rendering login/index
+Completed in 11ms (View: 7, DB: 1) | 200 OK [http://b137053.ppp.asahi-net.or.jp/login]
+
+
+Processing LoginController#authenticate (for 219.112.209.10 at 2009-03-13 05:39:34) [POST]
+  Session ID: 803996b807aa0e7141cefba46d9d0830
+  Parameters: {"name"=>"kgbu", "commit"=>"login", "action"=>"authenticate", "authenticity_token"=>"be200775ebba3c03c23d9886759997a1f5c0accd", "controller"=>"login", "remote_key"=>"[FILTERED]"}
+FriendFeed::APIClient is accessing to https://friendfeed.com/api/validate with client -613886108 for kgbu
+elapsed: 0.745369 [sec]
+  [4;36;1mUser Load (0.3ms)[0m   [0;1mSELECT * FROM "users" WHERE ("users"."name" = 'kgbu') LIMIT 1[0m
+  [4;35;1mUser Create (0.4ms)[0m   [0mINSERT INTO "users" ("name", "updated_at", "remote_key", "created_at") VALUES('kgbu', '2009-03-12 20:39:35', 'JwG3GVtUVOyzUfxFqt7LmMVR7Y6MuIE1YXFN2OVDs84=
+', '2009-03-12 20:39:35')[0m
+Redirected to controllerentry
+Completed in 917ms (DB: 2) | 302 Found [http://b137053.ppp.asahi-net.or.jp/login/authenticate]
+
+
+Processing EntryController#index (for 219.112.209.10 at 2009-03-13 05:39:35) [GET]
+  Session ID: 803996b807aa0e7141cefba46d9d0830
+  [4;36;1mUser Load (0.5ms)[0m   [0;1mSELECT * FROM "users" WHERE ("users"."id" = 1) [0m
+Redirected to actionlist
+Completed in 15ms (DB: 2) | 302 Found [http://b137053.ppp.asahi-net.or.jp/entry]
+
+
+Processing EntryController#list (for 219.112.209.10 at 2009-03-13 05:39:35) [GET]
+  Session ID: 803996b807aa0e7141cefba46d9d0830
+  [4;35;1mUser Load (0.4ms)[0m   [0mSELECT * FROM "users" WHERE ("users"."id" = 1) [0m
+FriendFeed::APIClient is accessing to https://friendfeed.com/api/feed/home with client -614801748 for kgbu
+getting entries with query: {:service=>nil, :num=>20, :start=>0}
+elapsed: 0.902582 [sec]
+  [4;36;1mPin Load (0.3ms)[0m   [0;1mSELECT * FROM "pins" WHERE (user_id = 1 and eid in ('269df0ee-7341-dc5f-096e-8c3c6eb373fe','600a5e10-3ee4-9596-fc2d-9ede6620efd4','6643087c-a4b6-81ab-6432-b1bce72d4ef2','910b2187-57f1-6ab5-95a8-29d6e6d49f4a','8da48ddf-73f6-d7c9-8da3-f7f4044625f4','5f56ac04-d794-818e-bde1-e32ea54ff0fb','af98da5f-6afa-03f9-4530-aa41e15c4417','404b1d8d-8fd0-c703-6269-28c803750652','1f70f4d7-b209-5d01-931e-2de9e2225c3f','355e55cc-83bc-30b2-3e6a-c939020ec67a','acba74f6-92a3-457e-56f6-0c803910e50a','aa2ac085-6317-41d5-a295-15b6cf43890e','b976ca2c-b350-4299-92b9-e04128dc97fc','309acb2a-6d2d-d021-e427-c3722a0a267a','06ae18de-30dd-4cfc-bf17-b736cb65e074','c59bc909-9380-b17e-3996-543d8ce85638','1ee07543-ffda-4045-8159-45206d9765e2','4306130a-89db-dd68-a4f0-046bc3a18e37','cb73799f-d4a6-55cd-d3fe-569d62c7572b','cee3aa08-1936-a89e-2eea-39807d4a9e62')) [0m
+Rendering template within layouts/entry
+Rendering entry/list
+Rendered entry/_entry (4.7ms)
+Rendered entry/_entry (4.9ms)
+Rendered entry/_entry (2.7ms)
+Rendered entry/_entry (3.5ms)
+Rendered entry/_entry (3.6ms)
+Rendered entry/_entry (3.4ms)
+Rendered entry/_comment (1.6ms)
+Rendered entry/_comment (0.9ms)
+Rendered entry/_comment (1.3ms)
+Rendered entry/_comment (1.6ms)
+Rendered entry/_entry (11.9ms)
+Rendered entry/_entry (2.9ms)
+Rendered entry/_entry (1.5ms)
+Rendered entry/_entry (3.2ms)
+Rendered entry/_entry (3.0ms)
+Rendered entry/_entry (4.4ms)
+Rendered entry/_comment (1.3ms)
+Rendered entry/_comment (1.2ms)
+Rendered entry/_comment (1.6ms)
+Rendered entry/_entry (8.6ms)
+Rendered entry/_entry (3.3ms)
+Rendered entry/_entry (3.1ms)
+Rendered entry/_comment (2.2ms)
+Rendered entry/_comment (2.0ms)
+Rendered entry/_comment (2.4ms)
+Rendered entry/_entry (11.6ms)
+Rendered entry/_comment (1.4ms)
+Rendered entry/_comment (1.3ms)
+Rendered entry/_comment (1.3ms)
+Rendered entry/_comment (1.6ms)
+Rendered entry/_entry (10.4ms)
+Rendered entry/_comment (1.7ms)
+Rendered entry/_comment (0.9ms)
+Rendered entry/_comment (1.5ms)
+Rendered entry/_comment (1.7ms)
+Rendered entry/_entry (10.1ms)
+Rendered entry/_comment (1.3ms)
+Rendered entry/_comment (1.3ms)
+Rendered entry/_comment (1.7ms)
+Rendered entry/_entry (10.3ms)
+Completed in 1123ms (View: 135, DB: 2) | 200 OK [http://b137053.ppp.asahi-net.or.jp/entry/list]
+
+
+Processing EntryController#add (for 219.112.209.10 at 2009-03-13 05:40:26) [POST]
+  Session ID: 803996b807aa0e7141cefba46d9d0830
+  Parameters: {"commit"=>"post", "body"=>"ひさしぶりにnahi/f2pをあらためてgit cloneして起動してみた。今度はjpmobileでやれるかな", "authenticity_token"=>"be200775ebba3c03c23d9886759997a1f5c0accd"}
+  [4;35;1mUser Load (0.4ms)[0m   [0mSELECT * FROM "users" WHERE ("users"."id" = 1) [0m
+FriendFeed::APIClient is accessing to https://friendfeed.com/api/share with client -614307608 for kgbu
+elapsed: 1.419437 [sec]
+Redirected to idactionlist
+Completed in 1444ms (DB: 3) | 302 Found [http://b137053.ppp.asahi-net.or.jp/entry/add]
+
+
+Processing EntryController#list (for 219.112.209.10 at 2009-03-13 05:40:28) [GET]
+  Session ID: 803996b807aa0e7141cefba46d9d0830
+  [4;36;1mUser Load (0.4ms)[0m   [0;1mSELECT * FROM "users" WHERE ("users"."id" = 1) [0m
+FriendFeed::APIClient is accessing to https://friendfeed.com/api/feed/home with client -614989478 for kgbu
+getting entries with query: {:service=>nil, :num=>20, :start=>0}
+elapsed: 0.906944 [sec]
+  [4;35;1mPin Load (0.3ms)[0m   [0mSELECT * FROM "pins" WHERE (user_id = 1 and eid in ('3fd020e2-0dce-4a7c-bf91-5f1ea3dd5e1b','269df0ee-7341-dc5f-096e-8c3c6eb373fe','600a5e10-3ee4-9596-fc2d-9ede6620efd4','6643087c-a4b6-81ab-6432-b1bce72d4ef2','910b2187-57f1-6ab5-95a8-29d6e6d49f4a','8da48ddf-73f6-d7c9-8da3-f7f4044625f4','5f56ac04-d794-818e-bde1-e32ea54ff0fb','af98da5f-6afa-03f9-4530-aa41e15c4417','404b1d8d-8fd0-c703-6269-28c803750652','1f70f4d7-b209-5d01-931e-2de9e2225c3f','355e55cc-83bc-30b2-3e6a-c939020ec67a','acba74f6-92a3-457e-56f6-0c803910e50a','aa2ac085-6317-41d5-a295-15b6cf43890e','b976ca2c-b350-4299-92b9-e04128dc97fc','309acb2a-6d2d-d021-e427-c3722a0a267a','06ae18de-30dd-4cfc-bf17-b736cb65e074','c59bc909-9380-b17e-3996-543d8ce85638','1ee07543-ffda-4045-8159-45206d9765e2','4306130a-89db-dd68-a4f0-046bc3a18e37','cb73799f-d4a6-55cd-d3fe-569d62c7572b')) [0m
+Rendering template within layouts/entry
+Rendering entry/list
+Rendered entry/_entry (3.5ms)
+Rendered entry/_entry (4.3ms)
+Rendered entry/_entry (3.9ms)
+Rendered entry/_entry (3.8ms)
+Rendered entry/_comment (1.3ms)
+Rendered entry/_comment (0.8ms)
+Rendered entry/_comment (1.3ms)
+Rendered entry/_comment (1.6ms)
+Rendered entry/_entry (12.5ms)
+Rendered entry/_entry (2.7ms)
+Rendered entry/_entry (3.0ms)
+Rendered entry/_entry (3.5ms)
+Rendered entry/_entry (2.7ms)
+Rendered entry/_entry (3.7ms)
+Rendered entry/_entry (3.2ms)
+Rendered entry/_entry (3.5ms)
+Rendered entry/_entry (3.7ms)
+Rendered entry/_comment (1.3ms)
+Rendered entry/_comment (1.4ms)
+Rendered entry/_comment (1.6ms)
+Rendered entry/_entry (9.1ms)
+Rendered entry/_entry (3.0ms)
+Rendered entry/_entry (2.8ms)
+Rendered entry/_comment (2.3ms)
+Rendered entry/_comment (1.9ms)
+Rendered entry/_comment (2.5ms)
+Rendered entry/_entry (11.6ms)
+Rendered entry/_comment (1.3ms)
+Rendered entry/_comment (1.2ms)
+Rendered entry/_comment (1.3ms)
+Rendered entry/_comment (1.6ms)
+Rendered entry/_entry (10.8ms)
+Rendered entry/_comment (1.2ms)
+Rendered entry/_comment (0.7ms)
+Rendered entry/_comment (1.3ms)
+Rendered entry/_comment (1.8ms)
+Rendered entry/_entry (8.8ms)
+Rendered entry/_comment (1.6ms)
+Rendered entry/_comment (1.3ms)
+Rendered entry/_comment (1.6ms)
+Rendered entry/_entry (10.5ms)
+Completed in 1120ms (View: 137, DB: 2) | 200 OK [http://b137053.ppp.asahi-net.or.jp/entry/list]
+
+
+Processing EntryController#list (for 219.112.209.10 at 2009-03-13 05:40:50) [GET]
+  Session ID: 803996b807aa0e7141cefba46d9d0830
+  [4;36;1mUser Load (0.4ms)[0m   [0;1mSELECT * FROM "users" WHERE ("users"."id" = 1) [0m
+FriendFeed::APIClient is accessing to https://friendfeed.com/api/feed/home with client -614216518 for kgbu
+getting entries with query: {:service=>nil, :num=>20, :start=>0}
+elapsed: 0.921005 [sec]
+  [4;35;1mPin Load (0.3ms)[0m   [0mSELECT * FROM "pins" WHERE (user_id = 1 and eid in ('3fd020e2-0dce-4a7c-bf91-5f1ea3dd5e1b','269df0ee-7341-dc5f-096e-8c3c6eb373fe','600a5e10-3ee4-9596-fc2d-9ede6620efd4','6643087c-a4b6-81ab-6432-b1bce72d4ef2','910b2187-57f1-6ab5-95a8-29d6e6d49f4a','8da48ddf-73f6-d7c9-8da3-f7f4044625f4','5f56ac04-d794-818e-bde1-e32ea54ff0fb','af98da5f-6afa-03f9-4530-aa41e15c4417','404b1d8d-8fd0-c703-6269-28c803750652','1f70f4d7-b209-5d01-931e-2de9e2225c3f','355e55cc-83bc-30b2-3e6a-c939020ec67a','acba74f6-92a3-457e-56f6-0c803910e50a','aa2ac085-6317-41d5-a295-15b6cf43890e','b976ca2c-b350-4299-92b9-e04128dc97fc','309acb2a-6d2d-d021-e427-c3722a0a267a','06ae18de-30dd-4cfc-bf17-b736cb65e074','c59bc909-9380-b17e-3996-543d8ce85638','1ee07543-ffda-4045-8159-45206d9765e2','4306130a-89db-dd68-a4f0-046bc3a18e37','cb73799f-d4a6-55cd-d3fe-569d62c7572b')) [0m
+Rendering template within layouts/entry
+Rendering entry/list
+Rendered entry/_entry (3.4ms)
+Rendered entry/_entry (4.4ms)
+Rendered entry/_entry (3.2ms)
+Rendered entry/_entry (4.4ms)
+Rendered entry/_comment (1.6ms)
+Rendered entry/_comment (1.0ms)
+Rendered entry/_comment (1.7ms)
+Rendered entry/_comment (1.7ms)
+Rendered entry/_entry (12.6ms)
+Rendered entry/_entry (2.7ms)
+Rendered entry/_entry (2.7ms)
+Rendered entry/_entry (3.5ms)
+Rendered entry/_entry (3.6ms)
+Rendered entry/_entry (3.9ms)
+Rendered entry/_entry (2.7ms)
+Rendered entry/_entry (3.5ms)
+Rendered entry/_entry (4.1ms)
+Rendered entry/_comment (1.2ms)
+Rendered entry/_comment (1.2ms)
+Rendered entry/_comment (2.0ms)
+Rendered entry/_entry (9.0ms)
+Rendered entry/_entry (3.4ms)
+Rendered entry/_entry (2.7ms)
+Rendered entry/_comment (2.5ms)
+Rendered entry/_comment (2.0ms)
+Rendered entry/_comment (3.0ms)
+Rendered entry/_entry (12.8ms)
+Rendered entry/_comment (1.3ms)
+Rendered entry/_comment (1.2ms)
+Rendered entry/_comment (1.2ms)
+Rendered entry/_comment (2.2ms)
+Rendered entry/_entry (10.4ms)
+Rendered entry/_comment (1.2ms)
+Rendered entry/_comment (0.8ms)
+Rendered entry/_comment (1.3ms)
+Rendered entry/_comment (1.6ms)
+Rendered entry/_entry (8.8ms)
+Rendered entry/_comment (1.7ms)
+Rendered entry/_comment (1.6ms)
+Rendered entry/_comment (1.8ms)
+Rendered entry/_entry (10.4ms)
+Completed in 1138ms (View: 139, DB: 3) | 200 OK [http://b137053.ppp.asahi-net.or.jp/entry/list]
+
+
+Processing SettingController#index (for 219.112.209.10 at 2009-03-13 05:41:07) [GET]
+  Session ID: 803996b807aa0e7141cefba46d9d0830
+  [4;36;1mUser Load (0.4ms)[0m   [0;1mSELECT * FROM "users" WHERE ("users"."id" = 1) [0m
+Rendering template within layouts/setting
+Rendering setting/index
+Completed in 16ms (View: 9, DB: 2) | 200 OK [http://b137053.ppp.asahi-net.or.jp/setting]
+
+
+Processing SettingController#update (for 219.112.209.10 at 2009-03-13 05:41:13) [POST]
+  Session ID: 803996b807aa0e7141cefba46d9d0830
+  Parameters: {"commit"=>"update", "list_view_media_rendering"=>"checked", "authenticity_token"=>"be200775ebba3c03c23d9886759997a1f5c0accd", "entries_in_page"=>"20", "font_size"=>"9", "entries_in_thread"=>"4", "text_folding_size"=>"140"}
+  [4;35;1mUser Load (0.4ms)[0m   [0mSELECT * FROM "users" WHERE ("users"."id" = 1) [0m
+Redirected to controllerentryactionlist
+Completed in 7ms (DB: 3) | 302 Found [http://b137053.ppp.asahi-net.or.jp/setting/update]
+
+
+Processing EntryController#list (for 219.112.209.10 at 2009-03-13 05:41:14) [GET]
+  Session ID: 803996b807aa0e7141cefba46d9d0830
+  [4;36;1mUser Load (0.4ms)[0m   [0;1mSELECT * FROM "users" WHERE ("users"."id" = 1) [0m
+FriendFeed::APIClient is accessing to https://friendfeed.com/api/feed/home with client -614636708 for kgbu
+getting entries with query: {:service=>nil, :num=>20, :start=>0}
+elapsed: 0.923253 [sec]
+  [4;35;1mPin Load (0.3ms)[0m   [0mSELECT * FROM "pins" WHERE (user_id = 1 and eid in ('3fd020e2-0dce-4a7c-bf91-5f1ea3dd5e1b','269df0ee-7341-dc5f-096e-8c3c6eb373fe','600a5e10-3ee4-9596-fc2d-9ede6620efd4','6643087c-a4b6-81ab-6432-b1bce72d4ef2','910b2187-57f1-6ab5-95a8-29d6e6d49f4a','8da48ddf-73f6-d7c9-8da3-f7f4044625f4','5f56ac04-d794-818e-bde1-e32ea54ff0fb','af98da5f-6afa-03f9-4530-aa41e15c4417','404b1d8d-8fd0-c703-6269-28c803750652','1f70f4d7-b209-5d01-931e-2de9e2225c3f','355e55cc-83bc-30b2-3e6a-c939020ec67a','acba74f6-92a3-457e-56f6-0c803910e50a','aa2ac085-6317-41d5-a295-15b6cf43890e','b976ca2c-b350-4299-92b9-e04128dc97fc','309acb2a-6d2d-d021-e427-c3722a0a267a','06ae18de-30dd-4cfc-bf17-b736cb65e074','c59bc909-9380-b17e-3996-543d8ce85638','1ee07543-ffda-4045-8159-45206d9765e2','4306130a-89db-dd68-a4f0-046bc3a18e37','cb73799f-d4a6-55cd-d3fe-569d62c7572b')) [0m
+Rendering template within layouts/entry
+Rendering entry/list
+Rendered entry/_entry (2.8ms)
+Rendered entry/_entry (4.6ms)
+Rendered entry/_entry (3.5ms)
+Rendered entry/_entry (4.2ms)
+Rendered entry/_comment (1.5ms)
+Rendered entry/_comment (0.9ms)
+Rendered entry/_comment (1.6ms)
+Rendered entry/_comment (1.9ms)
+Rendered entry/_entry (13.0ms)
+Rendered entry/_entry (2.9ms)
+Rendered entry/_entry (2.9ms)
+Rendered entry/_entry (3.4ms)
+Rendered entry/_entry (2.9ms)
+Rendered entry/_entry (3.7ms)
+Rendered entry/_entry (2.6ms)
+Rendered entry/_entry (3.3ms)
+Rendered entry/_entry (3.3ms)
+Rendered entry/_comment (1.4ms)
+Rendered entry/_comment (1.5ms)
+Rendered entry/_comment (1.7ms)
+Rendered entry/_entry (8.9ms)
+Rendered entry/_entry (3.3ms)
+Rendered entry/_entry (3.3ms)
+Rendered entry/_comment (2.0ms)
+Rendered entry/_comment (1.9ms)
+Rendered entry/_comment (2.5ms)
+Rendered entry/_entry (11.0ms)
+Rendered entry/_comment (1.6ms)
+Rendered entry/_comment (1.6ms)
+Rendered entry/_comment (1.6ms)
+Rendered entry/_comment (1.7ms)
+Rendered entry/_entry (11.4ms)
+Rendered entry/_comment (1.2ms)
+Rendered entry/_comment (0.7ms)
+Rendered entry/_comment (1.3ms)
+Rendered entry/_comment (1.6ms)
+Rendered entry/_entry (8.6ms)
+Rendered entry/_comment (1.3ms)
+Rendered entry/_comment (1.3ms)
+Rendered entry/_comment (1.6ms)
+Rendered entry/_entry (9.4ms)
+Completed in 1133ms (View: 135, DB: 3) | 200 OK [http://b137053.ppp.asahi-net.or.jp/entry/list]
+
+
+Processing EntryController#list (for 219.112.209.10 at 2009-03-13 05:41:40) [GET]
+  Session ID: 803996b807aa0e7141cefba46d9d0830
+  Parameters: {"like"=>"likes"}
+  [4;36;1mUser Load (0.4ms)[0m   [0;1mSELECT * FROM "users" WHERE ("users"."id" = 1) [0m
+FriendFeed::APIClient is accessing to https://friendfeed.com/api/feed/user/kgbu/likes with client -613992798 for kgbu
+getting entries with query: {:service=>nil, :num=>20, :start=>0}
+elapsed: 1.073219 [sec]
+  [4;35;1mPin Load (0.3ms)[0m   [0mSELECT * FROM "pins" WHERE (user_id = 1 and eid in ('600a5e10-3ee4-9596-fc2d-9ede6620efd4','dccd698b-7431-4781-8a3a-bed03a95356c','29904025-b4d4-95df-2116-e0b111c0c5ce','bd7d3d44-d789-fc57-ba3d-0f4529d5083b','61014f48-a16b-8702-9a67-0fe2f81ce102','a31db670-bab1-3f2a-acc5-4f797386ae25','18333fdb-608c-46a1-ae82-a8fa4ff66610','125ac4f6-e4ca-4206-9672-19d3f6ab0d9e','c5477762-8df4-4292-a7d8-e940f26d9ff0','f57d8763-7710-5b96-a8a9-719224f25695','c3b05223-6754-c752-746d-abfdf4fb2080','0043dfcf-ce06-2e7d-6393-7e379c630c22','716f44d9-40c7-e3ff-5c23-a84888ff9e34','e43c5885-2382-4f25-97e9-3af2682848e2','c4ed8d06-7412-cd66-fac5-a373ad6435b5','84b33d6e-769b-0a97-2df5-97a4d0c7aede','6baa81f9-e832-611e-5c08-60c46c4475c5','fc4b32e2-4d96-fb23-fed5-6323947ca8f0','89034f66-a95e-405d-8afc-7d6a25adffa2','bf2cc1e1-ad0f-49ad-a3c5-08f81ee8c477')) [0m
+Rendering template within layouts/entry
+Rendering entry/list
+Rendered entry/_entry (4.7ms)
+Rendered entry/_comment (1.8ms)
+Rendered entry/_comment (0.8ms)
+Rendered entry/_comment (1.3ms)
+Rendered entry/_comment (1.7ms)
+Rendered entry/_entry (14.8ms)
+Rendered entry/_entry (4.1ms)
+Rendered entry/_comment (1.3ms)
+Rendered entry/_comment (1.4ms)
+Rendered entry/_comment (1.5ms)
+Rendered entry/_comment (2.2ms)
+Rendered entry/_entry (11.7ms)
+Rendered entry/_entry (4.1ms)
+Rendered entry/_entry (3.9ms)
+Rendered entry/_comment (1.3ms)
+Rendered entry/_comment (0.8ms)
+Rendered entry/_comment (1.2ms)
+Rendered entry/_comment (1.9ms)
+Rendered entry/_entry (10.5ms)
+Rendered entry/_comment (1.4ms)
+Rendered entry/_comment (0.8ms)
+Rendered entry/_comment (1.7ms)
+Rendered entry/_comment (2.2ms)
+Rendered entry/_entry (13.5ms)
+Rendered entry/_comment (1.3ms)
+Rendered entry/_comment (3.1ms)
+Rendered entry/_entry (9.3ms)
+Rendered entry/_entry (4.0ms)
+Rendered entry/_comment (1.2ms)
+Rendered entry/_comment (0.8ms)
+Rendered entry/_comment (1.7ms)
+Rendered entry/_comment (2.2ms)
+Rendered entry/_entry (10.8ms)
+Rendered entry/_entry (4.9ms)
+Rendered entry/_comment (1.7ms)
+Rendered entry/_entry (7.4ms)
+Rendered entry/_comment (1.3ms)
+Rendered entry/_comment (0.8ms)
+Rendered entry/_comment (1.2ms)
+Rendered entry/_comment (1.6ms)
+Rendered entry/_entry (9.9ms)
+Rendered entry/_entry (4.4ms)
+Rendered entry/_entry (5.3ms)
+Rendered entry/_entry (4.3ms)
+Rendered entry/_entry (4.0ms)
+Rendered entry/_entry (5.3ms)
+Rendered entry/_entry (3.7ms)
+Completed in 1325ms (View: 167, DB: 2) | 200 OK [http://b137053.ppp.asahi-net.or.jp/entry/list?like=likes]
+
+
+Processing EntryController#inbox (for 219.112.209.10 at 2009-03-13 05:41:58) [GET]
+  Session ID: 803996b807aa0e7141cefba46d9d0830
+  [4;36;1mUser Load (0.4ms)[0m   [0;1mSELECT * FROM "users" WHERE ("users"."id" = 1) [0m
+FriendFeed::APIClient is accessing to https://friendfeed.com/api/feed/home with client -615796888 for kgbu
+getting entries with query: {:service=>nil, :num=>20, :start=>0}
+elapsed: 0.893191 [sec]
+  [4;35;1mPin Load (0.3ms)[0m   [0mSELECT * FROM "pins" WHERE (user_id = 1 and eid in ('3fd020e2-0dce-4a7c-bf91-5f1ea3dd5e1b','269df0ee-7341-dc5f-096e-8c3c6eb373fe','600a5e10-3ee4-9596-fc2d-9ede6620efd4','6643087c-a4b6-81ab-6432-b1bce72d4ef2','910b2187-57f1-6ab5-95a8-29d6e6d49f4a','8da48ddf-73f6-d7c9-8da3-f7f4044625f4','5f56ac04-d794-818e-bde1-e32ea54ff0fb','af98da5f-6afa-03f9-4530-aa41e15c4417','404b1d8d-8fd0-c703-6269-28c803750652','1f70f4d7-b209-5d01-931e-2de9e2225c3f','355e55cc-83bc-30b2-3e6a-c939020ec67a','acba74f6-92a3-457e-56f6-0c803910e50a','aa2ac085-6317-41d5-a295-15b6cf43890e','b976ca2c-b350-4299-92b9-e04128dc97fc','309acb2a-6d2d-d021-e427-c3722a0a267a','06ae18de-30dd-4cfc-bf17-b736cb65e074','c59bc909-9380-b17e-3996-543d8ce85638','1ee07543-ffda-4045-8159-45206d9765e2','4306130a-89db-dd68-a4f0-046bc3a18e37','cb73799f-d4a6-55cd-d3fe-569d62c7572b')) [0m
+  [4;36;1mPin Load (0.3ms)[0m   [0;1mSELECT * FROM "pins" WHERE ("pins"."user_id" = 1) [0m
+  [4;35;1mLastModified Load (0.5ms)[0m   [0mSELECT * FROM "last_modifieds" WHERE ("last_modifieds"."eid" IN ('3fd020e2-0dce-4a7c-bf91-5f1ea3dd5e1b','269df0ee-7341-dc5f-096e-8c3c6eb373fe','600a5e10-3ee4-9596-fc2d-9ede6620efd4','6643087c-a4b6-81ab-6432-b1bce72d4ef2','910b2187-57f1-6ab5-95a8-29d6e6d49f4a','8da48ddf-73f6-d7c9-8da3-f7f4044625f4','5f56ac04-d794-818e-bde1-e32ea54ff0fb','af98da5f-6afa-03f9-4530-aa41e15c4417','404b1d8d-8fd0-c703-6269-28c803750652','1f70f4d7-b209-5d01-931e-2de9e2225c3f','355e55cc-83bc-30b2-3e6a-c939020ec67a','acba74f6-92a3-457e-56f6-0c803910e50a','aa2ac085-6317-41d5-a295-15b6cf43890e','b976ca2c-b350-4299-92b9-e04128dc97fc','309acb2a-6d2d-d021-e427-c3722a0a267a','06ae18de-30dd-4cfc-bf17-b736cb65e074','c59bc909-9380-b17e-3996-543d8ce85638','1ee07543-ffda-4045-8159-45206d9765e2','4306130a-89db-dd68-a4f0-046bc3a18e37','cb73799f-d4a6-55cd-d3fe-569d62c7572b')) [0m
+  [4;36;1mLastModified Create (0.4ms)[0m   [0;1mINSERT INTO "last_modifieds" ("eid", "updated_at", "date", "created_at") VALUES('3fd020e2-0dce-4a7c-bf91-5f1ea3dd5e1b', '2009-03-12 20:41:59', '2009-03-12 20:40:27', '2009-03-12 20:41:59')[0m
+  [4;35;1mLastModified Create (0.5ms)[0m   [0mINSERT INTO "last_modifieds" ("eid", "updated_at", "date", "created_at") VALUES('269df0ee-7341-dc5f-096e-8c3c6eb373fe', '2009-03-12 20:41:59', '2009-03-12 20:03:49', '2009-03-12 20:41:59')[0m
+  [4;36;1mLastModified Create (0.4ms)[0m   [0;1mINSERT INTO "last_modifieds" ("eid", "updated_at", "date", "created_at") VALUES('600a5e10-3ee4-9596-fc2d-9ede6620efd4', '2009-03-12 20:41:59', '2009-03-12 19:55:04', '2009-03-12 20:41:59')[0m
+  [4;35;1mLastModified Create (0.4ms)[0m   [0mINSERT INTO "last_modifieds" ("eid", "updated_at", "date", "created_at") VALUES('6643087c-a4b6-81ab-6432-b1bce72d4ef2', '2009-03-12 20:41:59', '2009-03-12 19:54:51', '2009-03-12 20:41:59')[0m
+  [4;36;1mLastModified Create (0.4ms)[0m   [0;1mINSERT INTO "last_modifieds" ("eid", "updated_at", "date", "created_at") VALUES('910b2187-57f1-6ab5-95a8-29d6e6d49f4a', '2009-03-12 20:41:59', '2009-03-12 19:22:34', '2009-03-12 20:41:59')[0m
+  [4;35;1mLastModified Create (0.4ms)[0m   [0mINSERT INTO "last_modifieds" ("eid", "updated_at", "date", "created_at") VALUES('8da48ddf-73f6-d7c9-8da3-f7f4044625f4', '2009-03-12 20:41:59', '2009-03-12 18:40:21', '2009-03-12 20:41:59')[0m
+  [4;36;1mLastModified Create (0.4ms)[0m   [0;1mINSERT INTO "last_modifieds" ("eid", "updated_at", "date", "created_at") VALUES('5f56ac04-d794-818e-bde1-e32ea54ff0fb', '2009-03-12 20:41:59', '2009-03-12 18:35:39', '2009-03-12 20:41:59')[0m
+  [4;35;1mLastModified Create (0.4ms)[0m   [0mINSERT INTO "last_modifieds" ("eid", "updated_at", "date", "created_at") VALUES('af98da5f-6afa-03f9-4530-aa41e15c4417', '2009-03-12 20:41:59', '2009-03-12 18:19:29', '2009-03-12 20:41:59')[0m
+  [4;36;1mLastModified Create (0.4ms)[0m   [0;1mINSERT INTO "last_modifieds" ("eid", "updated_at", "date", "created_at") VALUES('404b1d8d-8fd0-c703-6269-28c803750652', '2009-03-12 20:41:59', '2009-03-12 18:19:29', '2009-03-12 20:41:59')[0m
+  [4;35;1mLastModified Create (0.4ms)[0m   [0mINSERT INTO "last_modifieds" ("eid", "updated_at", "date", "created_at") VALUES('1f70f4d7-b209-5d01-931e-2de9e2225c3f', '2009-03-12 20:41:59', '2009-03-12 17:19:35', '2009-03-12 20:41:59')[0m
+  [4;36;1mLastModified Create (0.6ms)[0m   [0;1mINSERT INTO "last_modifieds" ("eid", "updated_at", "date", "created_at") VALUES('355e55cc-83bc-30b2-3e6a-c939020ec67a', '2009-03-12 20:41:59', '2009-03-12 17:12:56', '2009-03-12 20:41:59')[0m
+  [4;35;1mLastModified Create (0.4ms)[0m   [0mINSERT INTO "last_modifieds" ("eid", "updated_at", "date", "created_at") VALUES('acba74f6-92a3-457e-56f6-0c803910e50a', '2009-03-12 20:41:59', '2009-03-12 15:43:54', '2009-03-12 20:41:59')[0m
+  [4;36;1mLastModified Create (0.4ms)[0m   [0;1mINSERT INTO "last_modifieds" ("eid", "updated_at", "date", "created_at") VALUES('aa2ac085-6317-41d5-a295-15b6cf43890e', '2009-03-12 20:41:59', '2009-03-12 15:19:46', '2009-03-12 20:41:59')[0m
+  [4;35;1mLastModified Create (0.4ms)[0m   [0mINSERT INTO "last_modifieds" ("eid", "updated_at", "date", "created_at") VALUES('b976ca2c-b350-4299-92b9-e04128dc97fc', '2009-03-12 20:41:59', '2009-03-12 15:12:44', '2009-03-12 20:41:59')[0m
+  [4;36;1mLastModified Create (0.4ms)[0m   [0;1mINSERT INTO "last_modifieds" ("eid", "updated_at", "date", "created_at") VALUES('309acb2a-6d2d-d021-e427-c3722a0a267a', '2009-03-12 20:41:59', '2009-03-12 14:24:57', '2009-03-12 20:41:59')[0m
+  [4;35;1mLastModified Create (0.4ms)[0m   [0mINSERT INTO "last_modifieds" ("eid", "updated_at", "date", "created_at") VALUES('06ae18de-30dd-4cfc-bf17-b736cb65e074', '2009-03-12 20:41:59', '2009-03-12 13:43:27', '2009-03-12 20:41:59')[0m
+  [4;36;1mLastModified Create (0.4ms)[0m   [0;1mINSERT INTO "last_modifieds" ("eid", "updated_at", "date", "created_at") VALUES('c59bc909-9380-b17e-3996-543d8ce85638', '2009-03-12 20:41:59', '2009-03-12 12:26:00', '2009-03-12 20:41:59')[0m
+  [4;35;1mLastModified Create (0.4ms)[0m   [0mINSERT INTO "last_modifieds" ("eid", "updated_at", "date", "created_at") VALUES('1ee07543-ffda-4045-8159-45206d9765e2', '2009-03-12 20:41:59', '2009-03-12 11:53:42', '2009-03-12 20:41:59')[0m
+  [4;36;1mLastModified Create (0.5ms)[0m   [0;1mINSERT INTO "last_modifieds" ("eid", "updated_at", "date", "created_at") VALUES('4306130a-89db-dd68-a4f0-046bc3a18e37', '2009-03-12 20:41:59', '2009-03-12 11:39:47', '2009-03-12 20:41:59')[0m
+  [4;35;1mLastModified Create (0.4ms)[0m   [0mINSERT INTO "last_modifieds" ("eid", "updated_at", "date", "created_at") VALUES('cb73799f-d4a6-55cd-d3fe-569d62c7572b', '2009-03-12 20:41:59', '2009-03-12 11:38:58', '2009-03-12 20:41:59')[0m
+  [4;36;1mCheckedModified Load Including Associations (0.4ms)[0m   [0;1mSELECT "checked_modifieds"."id" AS t0_r0, "checked_modifieds"."user_id" AS t0_r1, "checked_modifieds"."last_modified_id" AS t0_r2, "checked_modifieds"."checked" AS t0_r3, "checked_modifieds"."created_at" AS t0_r4, "checked_modifieds"."updated_at" AS t0_r5, "last_modifieds"."id" AS t1_r0, "last_modifieds"."eid" AS t1_r1, "last_modifieds"."date" AS t1_r2, "last_modifieds"."created_at" AS t1_r3, "last_modifieds"."updated_at" AS t1_r4 FROM "checked_modifieds" LEFT OUTER JOIN "last_modifieds" ON "last_modifieds".id = "checked_modifieds".last_modified_id WHERE (user_id = 1 and last_modifieds.eid in ('3fd020e2-0dce-4a7c-bf91-5f1ea3dd5e1b','269df0ee-7341-dc5f-096e-8c3c6eb373fe','600a5e10-3ee4-9596-fc2d-9ede6620efd4','6643087c-a4b6-81ab-6432-b1bce72d4ef2','910b2187-57f1-6ab5-95a8-29d6e6d49f4a','8da48ddf-73f6-d7c9-8da3-f7f4044625f4','5f56ac04-d794-818e-bde1-e32ea54ff0fb','af98da5f-6afa-03f9-4530-aa41e15c4417','404b1d8d-8fd0-c703-6269-28c803750652','1f70f4d7-b209-5d01-931e-2de9e2225c3f','355e55cc-83bc-30b2-3e6a-c939020ec67a','acba74f6-92a3-457e-56f6-0c803910e50a','aa2ac085-6317-41d5-a295-15b6cf43890e','b976ca2c-b350-4299-92b9-e04128dc97fc','309acb2a-6d2d-d021-e427-c3722a0a267a','06ae18de-30dd-4cfc-bf17-b736cb65e074','c59bc909-9380-b17e-3996-543d8ce85638','1ee07543-ffda-4045-8159-45206d9765e2','4306130a-89db-dd68-a4f0-046bc3a18e37','cb73799f-d4a6-55cd-d3fe-569d62c7572b')) [0m
+Rendering template within layouts/entry
+Rendering entry/list
+Rendered entry/_entry (3.3ms)
+Rendered entry/_entry (6.1ms)
+Rendered entry/_entry (3.5ms)
+Rendered entry/_entry (4.0ms)
+Rendered entry/_comment (1.3ms)
+Rendered entry/_comment (0.8ms)
+Rendered entry/_comment (1.4ms)
+Rendered entry/_comment (2.2ms)
+Rendered entry/_entry (12.4ms)
+Rendered entry/_entry (3.2ms)
+Rendered entry/_entry (3.0ms)
+Rendered entry/_entry (3.7ms)
+Rendered entry/_entry (3.3ms)
+Rendered entry/_entry (5.3ms)
+Rendered entry/_entry (3.1ms)
+Rendered entry/_entry (3.7ms)
+Rendered entry/_entry (3.8ms)
+Rendered entry/_comment (1.5ms)
+Rendered entry/_comment (1.3ms)
+Rendered entry/_comment (2.0ms)
+Rendered entry/_entry (9.7ms)
+Rendered entry/_entry (3.7ms)
+Rendered entry/_entry (3.0ms)
+Rendered entry/_comment (2.2ms)
+Rendered entry/_comment (1.9ms)
+Rendered entry/_comment (2.2ms)
+Rendered entry/_entry (10.8ms)
+Rendered entry/_comment (1.6ms)
+Rendered entry/_comment (1.6ms)
+Rendered entry/_comment (1.5ms)
+Rendered entry/_comment (1.6ms)
+Rendered entry/_entry (11.3ms)
+Rendered entry/_comment (1.3ms)
+Rendered entry/_comment (0.8ms)
+Rendered entry/_comment (1.4ms)
+Rendered entry/_comment (1.7ms)
+Rendered entry/_entry (9.4ms)
+Rendered entry/_comment (1.3ms)
+Rendered entry/_comment (1.3ms)
+Rendered entry/_comment (1.6ms)
+Rendered entry/_entry (9.1ms)
+Completed in 1908ms (View: 141, DB: 12) | 200 OK [http://b137053.ppp.asahi-net.or.jp/entry/inbox]
+
+
+Processing EntryController#list (for 219.125.148.86 at 2009-03-13 05:43:53) [GET]
+  Session ID: c38293db5672cefc0fdc1ee10c1c558a
+Redirected to controllerloginactionindex
+Filter chain halted as [:login_required] rendered_or_redirected.
+Completed in 5ms (DB: 1) | 302 Found [http://b137053.ppp.asahi-net.or.jp/entry/list]
+
+
+Processing LoginController#index (for 219.125.148.86 at 2009-03-13 05:43:53) [GET]
+  Session ID: c38293db5672cefc0fdc1ee10c1c558a
+  Parameters: {"action"=>"index", "controller"=>"login"}
+Rendering template within layouts/login
+Rendering login/index
+Completed in 10ms (View: 6, DB: 1) | 200 OK [http://b137053.ppp.asahi-net.or.jp/login]
+
+
+Processing LoginController#authenticate (for 219.125.148.86 at 2009-03-13 05:44:17) [POST]
+  Session ID: c38293db5672cefc0fdc1ee10c1c558a
+  Parameters: {"name"=>"kgbu", "commit"=>"login", "action"=>"authenticate", "authenticity_token"=>"a6ec2c7765deca4bcd5694d1635718061203d2ca", "controller"=>"login", "remote_key"=>"[FILTERED]"}
+FriendFeed::APIClient is accessing to https://friendfeed.com/api/validate with client -616336008 for kgbu
+elapsed: 0.700518 [sec]
+  [4;35;1mUser Load (0.4ms)[0m   [0mSELECT * FROM "users" WHERE ("users"."name" = 'kgbu') LIMIT 1[0m
+  [4;36;1mUser Update (0.5ms)[0m   [0;1mUPDATE "users" SET "remote_key" = 'sQESlwcMgjg0N+BeAoqvoGIKMtx5Sb9Kvhj9dk7JI7c=
+', "updated_at" = '2009-03-12 20:44:18' WHERE "id" = 1[0m
+Redirected to controllerentry
+Completed in 737ms (DB: 2) | 302 Found [http://b137053.ppp.asahi-net.or.jp/login/authenticate]
+
+
+Processing EntryController#index (for 219.125.148.86 at 2009-03-13 05:44:19) [GET]
+  Session ID: c38293db5672cefc0fdc1ee10c1c558a
+  [4;35;1mUser Load (0.4ms)[0m   [0mSELECT * FROM "users" WHERE ("users"."id" = 1) [0m
+Redirected to actionlist
+Completed in 15ms (DB: 2) | 302 Found [http://b137053.ppp.asahi-net.or.jp/entry]
+
+
+Processing EntryController#list (for 219.125.148.86 at 2009-03-13 05:44:19) [GET]
+  Session ID: c38293db5672cefc0fdc1ee10c1c558a
+  [4;36;1mUser Load (0.4ms)[0m   [0;1mSELECT * FROM "users" WHERE ("users"."id" = 1) [0m
+FriendFeed::APIClient is accessing to https://friendfeed.com/api/feed/home with client -614817118 for kgbu
+getting entries with query: {:service=>nil, :num=>20, :start=>0}
+elapsed: 0.927324 [sec]
+  [4;35;1mPin Load (0.3ms)[0m   [0mSELECT * FROM "pins" WHERE (user_id = 1 and eid in ('3fd020e2-0dce-4a7c-bf91-5f1ea3dd5e1b','269df0ee-7341-dc5f-096e-8c3c6eb373fe','600a5e10-3ee4-9596-fc2d-9ede6620efd4','6643087c-a4b6-81ab-6432-b1bce72d4ef2','910b2187-57f1-6ab5-95a8-29d6e6d49f4a','8da48ddf-73f6-d7c9-8da3-f7f4044625f4','5f56ac04-d794-818e-bde1-e32ea54ff0fb','af98da5f-6afa-03f9-4530-aa41e15c4417','404b1d8d-8fd0-c703-6269-28c803750652','1f70f4d7-b209-5d01-931e-2de9e2225c3f','355e55cc-83bc-30b2-3e6a-c939020ec67a','acba74f6-92a3-457e-56f6-0c803910e50a','aa2ac085-6317-41d5-a295-15b6cf43890e','b976ca2c-b350-4299-92b9-e04128dc97fc','309acb2a-6d2d-d021-e427-c3722a0a267a','06ae18de-30dd-4cfc-bf17-b736cb65e074','c59bc909-9380-b17e-3996-543d8ce85638','1ee07543-ffda-4045-8159-45206d9765e2','4306130a-89db-dd68-a4f0-046bc3a18e37','cb73799f-d4a6-55cd-d3fe-569d62c7572b')) [0m
+Rendering template within layouts/entry
+Rendering entry/list
+Rendered entry/_entry (3.7ms)
+Rendered entry/_entry (4.5ms)
+Rendered entry/_entry (3.2ms)
+Rendered entry/_entry (3.9ms)
+Rendered entry/_comment (1.8ms)
+Rendered entry/_comment (1.1ms)
+Rendered entry/_comment (1.8ms)
+Rendered entry/_comment (1.9ms)
+Rendered entry/_entry (14.6ms)
+Rendered entry/_entry (3.1ms)
+Rendered entry/_entry (3.1ms)
+Rendered entry/_entry (3.1ms)
+Rendered entry/_entry (2.9ms)
+Rendered entry/_entry (4.1ms)
+Rendered entry/_entry (2.7ms)
+Rendered entry/_entry (3.5ms)
+Rendered entry/_entry (4.2ms)
+Rendered entry/_comment (1.2ms)
+Rendered entry/_comment (1.4ms)
+Rendered entry/_comment (1.7ms)
+Rendered entry/_entry (8.5ms)
+Rendered entry/_entry (3.5ms)
+Rendered entry/_entry (3.1ms)
+Rendered entry/_comment (2.3ms)
+Rendered entry/_comment (2.6ms)
+Rendered entry/_comment (2.4ms)
+Rendered entry/_entry (11.6ms)
+Rendered entry/_comment (1.3ms)
+Rendered entry/_comment (1.2ms)
+Rendered entry/_comment (1.4ms)
+Rendered entry/_comment (2.1ms)
+Rendered entry/_entry (10.5ms)
+Rendered entry/_comment (1.3ms)
+Rendered entry/_comment (0.8ms)
+Rendered entry/_comment (1.3ms)
+Rendered entry/_comment (1.7ms)
+Rendered entry/_entry (9.0ms)
+Rendered entry/_comment (1.3ms)
+Rendered entry/_comment (1.6ms)
+Rendered entry/_comment (2.0ms)
+Rendered entry/_entry (9.9ms)
+Completed in 1150ms (View: 139, DB: 2) | 200 OK [http://b137053.ppp.asahi-net.or.jp/entry/list]
+
+
+Processing SettingController#index (for 219.125.148.86 at 2009-03-13 05:44:43) [GET]
+  Session ID: c38293db5672cefc0fdc1ee10c1c558a
+  [4;36;1mUser Load (0.4ms)[0m   [0;1mSELECT * FROM "users" WHERE ("users"."id" = 1) [0m
+Rendering template within layouts/setting
+Rendering setting/index
+Completed in 18ms (View: 11, DB: 3) | 200 OK [http://b137053.ppp.asahi-net.or.jp/setting]
+
+
+Processing SettingController#update (for 219.125.148.86 at 2009-03-13 05:44:59) [POST]
+  Session ID: c38293db5672cefc0fdc1ee10c1c558a
+  Parameters: {"commit"=>"update", "authenticity_token"=>"a6ec2c7765deca4bcd5694d1635718061203d2ca", "entries_in_page"=>"20", "link_type_gwt"=>"checked", "font_size"=>"9", "entries_in_thread"=>"4", "text_folding_size"=>"140"}
+  [4;35;1mUser Load (0.4ms)[0m   [0mSELECT * FROM "users" WHERE ("users"."id" = 1) [0m
+Redirected to controllerentryactionlist
+Completed in 7ms (DB: 3) | 302 Found [http://b137053.ppp.asahi-net.or.jp/setting/update]
+
+
+Processing EntryController#list (for 219.125.148.86 at 2009-03-13 05:44:59) [GET]
+  Session ID: c38293db5672cefc0fdc1ee10c1c558a
+  [4;36;1mUser Load (0.3ms)[0m   [0;1mSELECT * FROM "users" WHERE ("users"."id" = 1) [0m
+FriendFeed::APIClient is accessing to https://friendfeed.com/api/feed/home with client -615106178 for kgbu
+getting entries with query: {:service=>nil, :num=>20, :start=>0}
+elapsed: 0.932706 [sec]
+  [4;35;1mPin Load (0.3ms)[0m   [0mSELECT * FROM "pins" WHERE (user_id = 1 and eid in ('3fd020e2-0dce-4a7c-bf91-5f1ea3dd5e1b','269df0ee-7341-dc5f-096e-8c3c6eb373fe','600a5e10-3ee4-9596-fc2d-9ede6620efd4','6643087c-a4b6-81ab-6432-b1bce72d4ef2','910b2187-57f1-6ab5-95a8-29d6e6d49f4a','8da48ddf-73f6-d7c9-8da3-f7f4044625f4','5f56ac04-d794-818e-bde1-e32ea54ff0fb','af98da5f-6afa-03f9-4530-aa41e15c4417','404b1d8d-8fd0-c703-6269-28c803750652','1f70f4d7-b209-5d01-931e-2de9e2225c3f','355e55cc-83bc-30b2-3e6a-c939020ec67a','acba74f6-92a3-457e-56f6-0c803910e50a','aa2ac085-6317-41d5-a295-15b6cf43890e','b976ca2c-b350-4299-92b9-e04128dc97fc','309acb2a-6d2d-d021-e427-c3722a0a267a','06ae18de-30dd-4cfc-bf17-b736cb65e074','c59bc909-9380-b17e-3996-543d8ce85638','1ee07543-ffda-4045-8159-45206d9765e2','4306130a-89db-dd68-a4f0-046bc3a18e37','cb73799f-d4a6-55cd-d3fe-569d62c7572b')) [0m
+Rendering template within layouts/entry
+Rendering entry/list
+Rendered entry/_entry (2.8ms)
+Rendered entry/_entry (5.4ms)
+Rendered entry/_entry (3.4ms)
+Rendered entry/_entry (3.7ms)
+Rendered entry/_comment (1.3ms)
+Rendered entry/_comment (0.8ms)
+Rendered entry/_comment (1.3ms)
+Rendered entry/_comment (1.6ms)
+Rendered entry/_entry (12.4ms)
+Rendered entry/_entry (3.3ms)
+Rendered entry/_entry (2.8ms)
+Rendered entry/_entry (3.3ms)
+Rendered entry/_entry (2.7ms)
+Rendered entry/_entry (4.3ms)
+Rendered entry/_entry (2.9ms)
+Rendered entry/_entry (3.8ms)
+Rendered entry/_entry (3.7ms)
+Rendered entry/_comment (1.5ms)
+Rendered entry/_comment (1.2ms)
+Rendered entry/_comment (1.8ms)
+Rendered entry/_entry (9.7ms)
+Rendered entry/_entry (3.3ms)
+Rendered entry/_entry (2.7ms)
+Rendered entry/_comment (2.8ms)
+Rendered entry/_comment (2.1ms)
+Rendered entry/_comment (2.3ms)
+Rendered entry/_entry (12.1ms)
+Rendered entry/_comment (1.2ms)
+Rendered entry/_comment (1.3ms)
+Rendered entry/_comment (1.3ms)
+Rendered entry/_comment (2.0ms)
+Rendered entry/_entry (10.2ms)
+Rendered entry/_comment (1.7ms)
+Rendered entry/_comment (0.8ms)
+Rendered entry/_comment (1.3ms)
+Rendered entry/_comment (1.6ms)
+Rendered entry/_entry (10.3ms)
+Rendered entry/_comment (1.3ms)
+Rendered entry/_comment (1.4ms)
+Rendered entry/_comment (2.1ms)
+Rendered entry/_entry (9.5ms)
+Completed in 1223ms (View: 217, DB: 2) | 200 OK [http://b137053.ppp.asahi-net.or.jp/entry/list]
+
+
+Processing EntryController#inbox (for 219.125.148.86 at 2009-03-13 05:45:18) [GET]
+  Session ID: c38293db5672cefc0fdc1ee10c1c558a
+  [4;36;1mUser Load (0.4ms)[0m   [0;1mSELECT * FROM "users" WHERE ("users"."id" = 1) [0m
+FriendFeed::APIClient is accessing to https://friendfeed.com/api/feed/home with client -614374798 for kgbu
+getting entries with query: {:service=>nil, :num=>20, :start=>0}
+elapsed: 0.897822 [sec]
+  [4;35;1mPin Load (0.3ms)[0m   [0mSELECT * FROM "pins" WHERE (user_id = 1 and eid in ('3fd020e2-0dce-4a7c-bf91-5f1ea3dd5e1b','269df0ee-7341-dc5f-096e-8c3c6eb373fe','600a5e10-3ee4-9596-fc2d-9ede6620efd4','6643087c-a4b6-81ab-6432-b1bce72d4ef2','910b2187-57f1-6ab5-95a8-29d6e6d49f4a','8da48ddf-73f6-d7c9-8da3-f7f4044625f4','5f56ac04-d794-818e-bde1-e32ea54ff0fb','af98da5f-6afa-03f9-4530-aa41e15c4417','404b1d8d-8fd0-c703-6269-28c803750652','1f70f4d7-b209-5d01-931e-2de9e2225c3f','355e55cc-83bc-30b2-3e6a-c939020ec67a','acba74f6-92a3-457e-56f6-0c803910e50a','aa2ac085-6317-41d5-a295-15b6cf43890e','b976ca2c-b350-4299-92b9-e04128dc97fc','309acb2a-6d2d-d021-e427-c3722a0a267a','06ae18de-30dd-4cfc-bf17-b736cb65e074','c59bc909-9380-b17e-3996-543d8ce85638','1ee07543-ffda-4045-8159-45206d9765e2','4306130a-89db-dd68-a4f0-046bc3a18e37','cb73799f-d4a6-55cd-d3fe-569d62c7572b')) [0m
+  [4;36;1mPin Load (0.3ms)[0m   [0;1mSELECT * FROM "pins" WHERE ("pins"."user_id" = 1) [0m
+  [4;35;1mLastModified Load (3.0ms)[0m   [0mSELECT * FROM "last_modifieds" WHERE ("last_modifieds"."eid" IN ('3fd020e2-0dce-4a7c-bf91-5f1ea3dd5e1b','269df0ee-7341-dc5f-096e-8c3c6eb373fe','600a5e10-3ee4-9596-fc2d-9ede6620efd4','6643087c-a4b6-81ab-6432-b1bce72d4ef2','910b2187-57f1-6ab5-95a8-29d6e6d49f4a','8da48ddf-73f6-d7c9-8da3-f7f4044625f4','5f56ac04-d794-818e-bde1-e32ea54ff0fb','af98da5f-6afa-03f9-4530-aa41e15c4417','404b1d8d-8fd0-c703-6269-28c803750652','1f70f4d7-b209-5d01-931e-2de9e2225c3f','355e55cc-83bc-30b2-3e6a-c939020ec67a','acba74f6-92a3-457e-56f6-0c803910e50a','aa2ac085-6317-41d5-a295-15b6cf43890e','b976ca2c-b350-4299-92b9-e04128dc97fc','309acb2a-6d2d-d021-e427-c3722a0a267a','06ae18de-30dd-4cfc-bf17-b736cb65e074','c59bc909-9380-b17e-3996-543d8ce85638','1ee07543-ffda-4045-8159-45206d9765e2','4306130a-89db-dd68-a4f0-046bc3a18e37','cb73799f-d4a6-55cd-d3fe-569d62c7572b')) [0m
+  [4;36;1mCheckedModified Load Including Associations (0.4ms)[0m   [0;1mSELECT "checked_modifieds"."id" AS t0_r0, "checked_modifieds"."user_id" AS t0_r1, "checked_modifieds"."last_modified_id" AS t0_r2, "checked_modifieds"."checked" AS t0_r3, "checked_modifieds"."created_at" AS t0_r4, "checked_modifieds"."updated_at" AS t0_r5, "last_modifieds"."id" AS t1_r0, "last_modifieds"."eid" AS t1_r1, "last_modifieds"."date" AS t1_r2, "last_modifieds"."created_at" AS t1_r3, "last_modifieds"."updated_at" AS t1_r4 FROM "checked_modifieds" LEFT OUTER JOIN "last_modifieds" ON "last_modifieds".id = "checked_modifieds".last_modified_id WHERE (user_id = 1 and last_modifieds.eid in ('3fd020e2-0dce-4a7c-bf91-5f1ea3dd5e1b','269df0ee-7341-dc5f-096e-8c3c6eb373fe','600a5e10-3ee4-9596-fc2d-9ede6620efd4','6643087c-a4b6-81ab-6432-b1bce72d4ef2','910b2187-57f1-6ab5-95a8-29d6e6d49f4a','8da48ddf-73f6-d7c9-8da3-f7f4044625f4','5f56ac04-d794-818e-bde1-e32ea54ff0fb','af98da5f-6afa-03f9-4530-aa41e15c4417','404b1d8d-8fd0-c703-6269-28c803750652','1f70f4d7-b209-5d01-931e-2de9e2225c3f','355e55cc-83bc-30b2-3e6a-c939020ec67a','acba74f6-92a3-457e-56f6-0c803910e50a','aa2ac085-6317-41d5-a295-15b6cf43890e','b976ca2c-b350-4299-92b9-e04128dc97fc','309acb2a-6d2d-d021-e427-c3722a0a267a','06ae18de-30dd-4cfc-bf17-b736cb65e074','c59bc909-9380-b17e-3996-543d8ce85638','1ee07543-ffda-4045-8159-45206d9765e2','4306130a-89db-dd68-a4f0-046bc3a18e37','cb73799f-d4a6-55cd-d3fe-569d62c7572b')) [0m
+Rendering template within layouts/entry
+Rendering entry/list
+Rendered entry/_entry (3.9ms)
+Rendered entry/_entry (6.2ms)
+Rendered entry/_entry (4.5ms)
+Rendered entry/_entry (4.9ms)
+Rendered entry/_comment (1.3ms)
+Rendered entry/_comment (0.8ms)
+Rendered entry/_comment (1.3ms)
+Rendered entry/_comment (1.8ms)
+Rendered entry/_entry (12.2ms)
+Rendered entry/_entry (3.5ms)
+Rendered entry/_entry (3.5ms)
+Rendered entry/_entry (4.3ms)
+Rendered entry/_entry (3.5ms)
+Rendered entry/_entry (4.3ms)
+Rendered entry/_entry (3.5ms)
+Rendered entry/_entry (4.8ms)
+Rendered entry/_entry (4.9ms)
+Rendered entry/_comment (1.2ms)
+Rendered entry/_comment (1.2ms)
+Rendered entry/_comment (1.6ms)
+Rendered entry/_entry (8.9ms)
+Rendered entry/_entry (3.7ms)
+Rendered entry/_entry (3.6ms)
+Rendered entry/_comment (2.6ms)
+Rendered entry/_comment (2.3ms)
+Rendered entry/_comment (2.7ms)
+Rendered entry/_entry (12.7ms)
+Rendered entry/_comment (1.4ms)
+Rendered entry/_comment (1.4ms)
+Rendered entry/_comment (1.6ms)
+Rendered entry/_comment (2.0ms)
+Rendered entry/_entry (12.1ms)
+Rendered entry/_comment (1.2ms)
+Rendered entry/_comment (0.7ms)
+Rendered entry/_comment (1.5ms)
+Rendered entry/_comment (2.0ms)
+Rendered entry/_entry (10.1ms)
+Rendered entry/_comment (1.5ms)
+Rendered entry/_comment (1.5ms)
+Rendered entry/_comment (1.9ms)
+Rendered entry/_entry (10.7ms)
+Completed in 1186ms (View: 152, DB: 6) | 200 OK [http://b137053.ppp.asahi-net.or.jp/entry/inbox]
+
+
+Processing EntryController#pin (for 219.125.148.86 at 2009-03-13 05:45:30) [GET]
+  Session ID: c38293db5672cefc0fdc1ee10c1c558a
+  Parameters: {"id"=>"3fd020e2-0dce-4a7c-bf91-5f1ea3dd5e1b"}
+  [4;35;1mUser Load (0.4ms)[0m   [0mSELECT * FROM "users" WHERE ("users"."id" = 1) [0m
+  [4;36;1mPin Load (0.2ms)[0m   [0;1mSELECT * FROM "pins" WHERE ("pins"."eid" = '3fd020e2-0dce-4a7c-bf91-5f1ea3dd5e1b' AND "pins"."user_id" = 1) LIMIT 1[0m
+  [4;35;1mPin Create (0.4ms)[0m   [0mINSERT INTO "pins" ("eid", "updated_at", "user_id", "created_at") VALUES('3fd020e2-0dce-4a7c-bf91-5f1ea3dd5e1b', '2009-03-12 20:45:30', 1, '2009-03-12 20:45:30')[0m
+  [4;36;1mCheckedModified Load Including Associations (0.4ms)[0m   [0;1mSELECT "checked_modifieds"."id" AS t0_r0, "checked_modifieds"."user_id" AS t0_r1, "checked_modifieds"."last_modified_id" AS t0_r2, "checked_modifieds"."checked" AS t0_r3, "checked_modifieds"."created_at" AS t0_r4, "checked_modifieds"."updated_at" AS t0_r5, "last_modifieds"."id" AS t1_r0, "last_modifieds"."eid" AS t1_r1, "last_modifieds"."date" AS t1_r2, "last_modifieds"."created_at" AS t1_r3, "last_modifieds"."updated_at" AS t1_r4 FROM "checked_modifieds" LEFT OUTER JOIN "last_modifieds" ON "last_modifieds".id = "checked_modifieds".last_modified_id WHERE (user_id = 1 and last_modifieds.eid = '3fd020e2-0dce-4a7c-bf91-5f1ea3dd5e1b') LIMIT 1[0m
+Redirected to idactioninbox
+Completed in 80ms (DB: 3) | 302 Found [http://b137053.ppp.asahi-net.or.jp/entry/pin/3fd020e2-0dce-4a7c-bf91-5f1ea3dd5e1b]
+
+
+Processing EntryController#inbox (for 219.125.148.86 at 2009-03-13 05:45:30) [GET]
+  Session ID: c38293db5672cefc0fdc1ee10c1c558a
+  [4;35;1mUser Load (0.4ms)[0m   [0mSELECT * FROM "users" WHERE ("users"."id" = 1) [0m
+FriendFeed::APIClient is accessing to https://friendfeed.com/api/feed/home with client -614570338 for kgbu
+getting entries with query: {:service=>nil, :num=>20, :start=>0}
+elapsed: 0.888625 [sec]
+  [4;36;1mPin Load (0.7ms)[0m   [0;1mSELECT * FROM "pins" WHERE (user_id = 1 and eid in ('3fd020e2-0dce-4a7c-bf91-5f1ea3dd5e1b','269df0ee-7341-dc5f-096e-8c3c6eb373fe','600a5e10-3ee4-9596-fc2d-9ede6620efd4','6643087c-a4b6-81ab-6432-b1bce72d4ef2','910b2187-57f1-6ab5-95a8-29d6e6d49f4a','8da48ddf-73f6-d7c9-8da3-f7f4044625f4','5f56ac04-d794-818e-bde1-e32ea54ff0fb','af98da5f-6afa-03f9-4530-aa41e15c4417','404b1d8d-8fd0-c703-6269-28c803750652','1f70f4d7-b209-5d01-931e-2de9e2225c3f','355e55cc-83bc-30b2-3e6a-c939020ec67a','acba74f6-92a3-457e-56f6-0c803910e50a','aa2ac085-6317-41d5-a295-15b6cf43890e','b976ca2c-b350-4299-92b9-e04128dc97fc','309acb2a-6d2d-d021-e427-c3722a0a267a','06ae18de-30dd-4cfc-bf17-b736cb65e074','c59bc909-9380-b17e-3996-543d8ce85638','1ee07543-ffda-4045-8159-45206d9765e2','4306130a-89db-dd68-a4f0-046bc3a18e37','cb73799f-d4a6-55cd-d3fe-569d62c7572b')) [0m
+  [4;35;1mPin Load (0.4ms)[0m   [0mSELECT * FROM "pins" WHERE ("pins"."user_id" = 1) [0m
+  [4;36;1mLastModified Load (2.7ms)[0m   [0;1mSELECT * FROM "last_modifieds" WHERE ("last_modifieds"."eid" IN ('3fd020e2-0dce-4a7c-bf91-5f1ea3dd5e1b','269df0ee-7341-dc5f-096e-8c3c6eb373fe','600a5e10-3ee4-9596-fc2d-9ede6620efd4','6643087c-a4b6-81ab-6432-b1bce72d4ef2','910b2187-57f1-6ab5-95a8-29d6e6d49f4a','8da48ddf-73f6-d7c9-8da3-f7f4044625f4','5f56ac04-d794-818e-bde1-e32ea54ff0fb','af98da5f-6afa-03f9-4530-aa41e15c4417','404b1d8d-8fd0-c703-6269-28c803750652','1f70f4d7-b209-5d01-931e-2de9e2225c3f','355e55cc-83bc-30b2-3e6a-c939020ec67a','acba74f6-92a3-457e-56f6-0c803910e50a','aa2ac085-6317-41d5-a295-15b6cf43890e','b976ca2c-b350-4299-92b9-e04128dc97fc','309acb2a-6d2d-d021-e427-c3722a0a267a','06ae18de-30dd-4cfc-bf17-b736cb65e074','c59bc909-9380-b17e-3996-543d8ce85638','1ee07543-ffda-4045-8159-45206d9765e2','4306130a-89db-dd68-a4f0-046bc3a18e37','cb73799f-d4a6-55cd-d3fe-569d62c7572b')) [0m
+  [4;35;1mCheckedModified Load Including Associations (0.3ms)[0m   [0mSELECT "checked_modifieds"."id" AS t0_r0, "checked_modifieds"."user_id" AS t0_r1, "checked_modifieds"."last_modified_id" AS t0_r2, "checked_modifieds"."checked" AS t0_r3, "checked_modifieds"."created_at" AS t0_r4, "checked_modifieds"."updated_at" AS t0_r5, "last_modifieds"."id" AS t1_r0, "last_modifieds"."eid" AS t1_r1, "last_modifieds"."date" AS t1_r2, "last_modifieds"."created_at" AS t1_r3, "last_modifieds"."updated_at" AS t1_r4 FROM "checked_modifieds" LEFT OUTER JOIN "last_modifieds" ON "last_modifieds".id = "checked_modifieds".last_modified_id WHERE (user_id = 1 and last_modifieds.eid in ('3fd020e2-0dce-4a7c-bf91-5f1ea3dd5e1b','269df0ee-7341-dc5f-096e-8c3c6eb373fe','600a5e10-3ee4-9596-fc2d-9ede6620efd4','6643087c-a4b6-81ab-6432-b1bce72d4ef2','910b2187-57f1-6ab5-95a8-29d6e6d49f4a','8da48ddf-73f6-d7c9-8da3-f7f4044625f4','5f56ac04-d794-818e-bde1-e32ea54ff0fb','af98da5f-6afa-03f9-4530-aa41e15c4417','404b1d8d-8fd0-c703-6269-28c803750652','1f70f4d7-b209-5d01-931e-2de9e2225c3f','355e55cc-83bc-30b2-3e6a-c939020ec67a','acba74f6-92a3-457e-56f6-0c803910e50a','aa2ac085-6317-41d5-a295-15b6cf43890e','b976ca2c-b350-4299-92b9-e04128dc97fc','309acb2a-6d2d-d021-e427-c3722a0a267a','06ae18de-30dd-4cfc-bf17-b736cb65e074','c59bc909-9380-b17e-3996-543d8ce85638','1ee07543-ffda-4045-8159-45206d9765e2','4306130a-89db-dd68-a4f0-046bc3a18e37','cb73799f-d4a6-55cd-d3fe-569d62c7572b')) [0m
+Rendering template within layouts/entry
+Rendering entry/list
+Rendered entry/_entry (3.8ms)
+Rendered entry/_entry (6.5ms)
+Rendered entry/_entry (4.6ms)
+Rendered entry/_entry (4.7ms)
+Rendered entry/_comment (1.6ms)
+Rendered entry/_comment (1.0ms)
+Rendered entry/_comment (1.6ms)
+Rendered entry/_comment (1.9ms)
+Rendered entry/_entry (14.7ms)
+Rendered entry/_entry (3.8ms)
+Rendered entry/_entry (3.9ms)
+Rendered entry/_entry (4.3ms)
+Rendered entry/_entry (3.6ms)
+Rendered entry/_entry (5.5ms)
+Rendered entry/_entry (3.8ms)
+Rendered entry/_entry (4.8ms)
+Rendered entry/_entry (5.3ms)
+Rendered entry/_comment (1.5ms)
+Rendered entry/_comment (1.5ms)
+Rendered entry/_comment (1.8ms)
+Rendered entry/_entry (10.3ms)
+Rendered entry/_entry (28.3ms)
+Rendered entry/_entry (3.0ms)
+Rendered entry/_comment (2.2ms)
+Rendered entry/_comment (1.9ms)
+Rendered entry/_comment (2.3ms)
+Rendered entry/_entry (10.9ms)
+Rendered entry/_comment (1.3ms)
+Rendered entry/_comment (1.2ms)
+Rendered entry/_comment (1.2ms)
+Rendered entry/_comment (1.6ms)
+Rendered entry/_entry (10.0ms)
+Rendered entry/_comment (1.3ms)
+Rendered entry/_comment (0.7ms)
+Rendered entry/_comment (1.3ms)
+Rendered entry/_comment (1.6ms)
+Rendered entry/_entry (9.1ms)
+Rendered entry/_comment (1.3ms)
+Rendered entry/_comment (1.2ms)
+Rendered entry/_comment (1.6ms)
+Rendered entry/_entry (9.4ms)
+Completed in 1225ms (View: 176, DB: 6) | 200 OK [http://b137053.ppp.asahi-net.or.jp/entry/inbox]
+
+
+Processing EntryController#inbox (for 219.112.209.10 at 2009-03-13 05:45:43) [GET]
+  Session ID: 803996b807aa0e7141cefba46d9d0830
+  [4;36;1mUser Load (0.5ms)[0m   [0;1mSELECT * FROM "users" WHERE ("users"."id" = 1) [0m
+FriendFeed::APIClient is accessing to https://friendfeed.com/api/feed/home with client -614262368 for kgbu
+getting entries with query: {:service=>nil, :num=>20, :start=>0}
+elapsed: 0.925299 [sec]
+  [4;35;1mPin Load (0.9ms)[0m   [0mSELECT * FROM "pins" WHERE (user_id = 1 and eid in ('3fd020e2-0dce-4a7c-bf91-5f1ea3dd5e1b','269df0ee-7341-dc5f-096e-8c3c6eb373fe','600a5e10-3ee4-9596-fc2d-9ede6620efd4','6643087c-a4b6-81ab-6432-b1bce72d4ef2','910b2187-57f1-6ab5-95a8-29d6e6d49f4a','8da48ddf-73f6-d7c9-8da3-f7f4044625f4','5f56ac04-d794-818e-bde1-e32ea54ff0fb','af98da5f-6afa-03f9-4530-aa41e15c4417','404b1d8d-8fd0-c703-6269-28c803750652','1f70f4d7-b209-5d01-931e-2de9e2225c3f','355e55cc-83bc-30b2-3e6a-c939020ec67a','acba74f6-92a3-457e-56f6-0c803910e50a','aa2ac085-6317-41d5-a295-15b6cf43890e','b976ca2c-b350-4299-92b9-e04128dc97fc','309acb2a-6d2d-d021-e427-c3722a0a267a','06ae18de-30dd-4cfc-bf17-b736cb65e074','c59bc909-9380-b17e-3996-543d8ce85638','1ee07543-ffda-4045-8159-45206d9765e2','4306130a-89db-dd68-a4f0-046bc3a18e37','cb73799f-d4a6-55cd-d3fe-569d62c7572b')) [0m
+  [4;36;1mPin Load (0.5ms)[0m   [0;1mSELECT * FROM "pins" WHERE ("pins"."user_id" = 1) [0m
+  [4;35;1mLastModified Load (3.0ms)[0m   [0mSELECT * FROM "last_modifieds" WHERE ("last_modifieds"."eid" IN ('3fd020e2-0dce-4a7c-bf91-5f1ea3dd5e1b','269df0ee-7341-dc5f-096e-8c3c6eb373fe','600a5e10-3ee4-9596-fc2d-9ede6620efd4','6643087c-a4b6-81ab-6432-b1bce72d4ef2','910b2187-57f1-6ab5-95a8-29d6e6d49f4a','8da48ddf-73f6-d7c9-8da3-f7f4044625f4','5f56ac04-d794-818e-bde1-e32ea54ff0fb','af98da5f-6afa-03f9-4530-aa41e15c4417','404b1d8d-8fd0-c703-6269-28c803750652','1f70f4d7-b209-5d01-931e-2de9e2225c3f','355e55cc-83bc-30b2-3e6a-c939020ec67a','acba74f6-92a3-457e-56f6-0c803910e50a','aa2ac085-6317-41d5-a295-15b6cf43890e','b976ca2c-b350-4299-92b9-e04128dc97fc','309acb2a-6d2d-d021-e427-c3722a0a267a','06ae18de-30dd-4cfc-bf17-b736cb65e074','c59bc909-9380-b17e-3996-543d8ce85638','1ee07543-ffda-4045-8159-45206d9765e2','4306130a-89db-dd68-a4f0-046bc3a18e37','cb73799f-d4a6-55cd-d3fe-569d62c7572b')) [0m
+  [4;36;1mCheckedModified Load Including Associations (0.5ms)[0m   [0;1mSELECT "checked_modifieds"."id" AS t0_r0, "checked_modifieds"."user_id" AS t0_r1, "checked_modifieds"."last_modified_id" AS t0_r2, "checked_modifieds"."checked" AS t0_r3, "checked_modifieds"."created_at" AS t0_r4, "checked_modifieds"."updated_at" AS t0_r5, "last_modifieds"."id" AS t1_r0, "last_modifieds"."eid" AS t1_r1, "last_modifieds"."date" AS t1_r2, "last_modifieds"."created_at" AS t1_r3, "last_modifieds"."updated_at" AS t1_r4 FROM "checked_modifieds" LEFT OUTER JOIN "last_modifieds" ON "last_modifieds".id = "checked_modifieds".last_modified_id WHERE (user_id = 1 and last_modifieds.eid in ('3fd020e2-0dce-4a7c-bf91-5f1ea3dd5e1b','269df0ee-7341-dc5f-096e-8c3c6eb373fe','600a5e10-3ee4-9596-fc2d-9ede6620efd4','6643087c-a4b6-81ab-6432-b1bce72d4ef2','910b2187-57f1-6ab5-95a8-29d6e6d49f4a','8da48ddf-73f6-d7c9-8da3-f7f4044625f4','5f56ac04-d794-818e-bde1-e32ea54ff0fb','af98da5f-6afa-03f9-4530-aa41e15c4417','404b1d8d-8fd0-c703-6269-28c803750652','1f70f4d7-b209-5d01-931e-2de9e2225c3f','355e55cc-83bc-30b2-3e6a-c939020ec67a','acba74f6-92a3-457e-56f6-0c803910e50a','aa2ac085-6317-41d5-a295-15b6cf43890e','b976ca2c-b350-4299-92b9-e04128dc97fc','309acb2a-6d2d-d021-e427-c3722a0a267a','06ae18de-30dd-4cfc-bf17-b736cb65e074','c59bc909-9380-b17e-3996-543d8ce85638','1ee07543-ffda-4045-8159-45206d9765e2','4306130a-89db-dd68-a4f0-046bc3a18e37','cb73799f-d4a6-55cd-d3fe-569d62c7572b')) [0m
+Rendering template within layouts/entry
+Rendering entry/list
+Rendered entry/_entry (4.5ms)
+Rendered entry/_entry (6.0ms)
+Rendered entry/_entry (4.1ms)
+Rendered entry/_entry (4.7ms)
+Rendered entry/_comment (1.5ms)
+Rendered entry/_comment (0.9ms)
+Rendered entry/_comment (1.6ms)
+Rendered entry/_comment (2.0ms)
+Rendered entry/_entry (13.5ms)
+Rendered entry/_entry (3.4ms)
+Rendered entry/_entry (3.7ms)
+Rendered entry/_entry (4.2ms)
+Rendered entry/_entry (3.7ms)
+Rendered entry/_entry (4.9ms)
+Rendered entry/_entry (3.5ms)
+Rendered entry/_entry (4.7ms)
+Rendered entry/_entry (4.5ms)
+Rendered entry/_comment (1.4ms)
+Rendered entry/_comment (1.4ms)
+Rendered entry/_comment (1.8ms)
+Rendered entry/_entry (10.0ms)
+Rendered entry/_entry (3.6ms)
+Rendered entry/_entry (3.5ms)
+Rendered entry/_comment (2.5ms)
+Rendered entry/_comment (2.2ms)
+Rendered entry/_comment (2.5ms)
+Rendered entry/_entry (12.6ms)
+Rendered entry/_comment (1.6ms)
+Rendered entry/_comment (1.4ms)
+Rendered entry/_comment (1.4ms)
+Rendered entry/_comment (2.0ms)
+Rendered entry/_entry (11.5ms)
+Rendered entry/_comment (1.5ms)
+Rendered entry/_comment (0.9ms)
+Rendered entry/_comment (1.4ms)
+Rendered entry/_comment (1.8ms)
+Rendered entry/_entry (10.5ms)
+Rendered entry/_comment (1.6ms)
+Rendered entry/_comment (1.5ms)
+Rendered entry/_comment (2.0ms)
+Rendered entry/_entry (11.0ms)
+Completed in 1235ms (View: 157, DB: 8) | 200 OK [http://b137053.ppp.asahi-net.or.jp/entry/inbox]
+
+
+Processing EntryController#pin (for 219.112.209.10 at 2009-03-13 05:45:52) [GET]
+  Session ID: 803996b807aa0e7141cefba46d9d0830
+  Parameters: {"id"=>"269df0ee-7341-dc5f-096e-8c3c6eb373fe"}
+  [4;35;1mUser Load (0.5ms)[0m   [0mSELECT * FROM "users" WHERE ("users"."id" = 1) [0m
+  [4;36;1mPin Load (0.3ms)[0m   [0;1mSELECT * FROM "pins" WHERE ("pins"."eid" = '269df0ee-7341-dc5f-096e-8c3c6eb373fe' AND "pins"."user_id" = 1) LIMIT 1[0m
+  [4;35;1mPin Create (0.5ms)[0m   [0mINSERT INTO "pins" ("eid", "updated_at", "user_id", "created_at") VALUES('269df0ee-7341-dc5f-096e-8c3c6eb373fe', '2009-03-12 20:45:52', 1, '2009-03-12 20:45:52')[0m
+  [4;36;1mCheckedModified Load Including Associations (0.4ms)[0m   [0;1mSELECT "checked_modifieds"."id" AS t0_r0, "checked_modifieds"."user_id" AS t0_r1, "checked_modifieds"."last_modified_id" AS t0_r2, "checked_modifieds"."checked" AS t0_r3, "checked_modifieds"."created_at" AS t0_r4, "checked_modifieds"."updated_at" AS t0_r5, "last_modifieds"."id" AS t1_r0, "last_modifieds"."eid" AS t1_r1, "last_modifieds"."date" AS t1_r2, "last_modifieds"."created_at" AS t1_r3, "last_modifieds"."updated_at" AS t1_r4 FROM "checked_modifieds" LEFT OUTER JOIN "last_modifieds" ON "last_modifieds".id = "checked_modifieds".last_modified_id WHERE (user_id = 1 and last_modifieds.eid = '269df0ee-7341-dc5f-096e-8c3c6eb373fe') LIMIT 1[0m
+Redirected to idactioninbox
+Completed in 221ms (DB: 4) | 302 Found [http://b137053.ppp.asahi-net.or.jp/entry/pin/269df0ee-7341-dc5f-096e-8c3c6eb373fe]
+
+
+Processing EntryController#inbox (for 219.112.209.10 at 2009-03-13 05:45:53) [GET]
+  Session ID: 803996b807aa0e7141cefba46d9d0830
+  [4;35;1mUser Load (0.5ms)[0m   [0mSELECT * FROM "users" WHERE ("users"."id" = 1) [0m
+FriendFeed::APIClient is accessing to https://friendfeed.com/api/feed/home with client -614399798 for kgbu
+getting entries with query: {:service=>nil, :num=>20, :start=>0}
+elapsed: 0.918191 [sec]
+  [4;36;1mPin Load (1.0ms)[0m   [0;1mSELECT * FROM "pins" WHERE (user_id = 1 and eid in ('3fd020e2-0dce-4a7c-bf91-5f1ea3dd5e1b','269df0ee-7341-dc5f-096e-8c3c6eb373fe','600a5e10-3ee4-9596-fc2d-9ede6620efd4','6643087c-a4b6-81ab-6432-b1bce72d4ef2','910b2187-57f1-6ab5-95a8-29d6e6d49f4a','8da48ddf-73f6-d7c9-8da3-f7f4044625f4','5f56ac04-d794-818e-bde1-e32ea54ff0fb','af98da5f-6afa-03f9-4530-aa41e15c4417','404b1d8d-8fd0-c703-6269-28c803750652','1f70f4d7-b209-5d01-931e-2de9e2225c3f','355e55cc-83bc-30b2-3e6a-c939020ec67a','acba74f6-92a3-457e-56f6-0c803910e50a','aa2ac085-6317-41d5-a295-15b6cf43890e','b976ca2c-b350-4299-92b9-e04128dc97fc','309acb2a-6d2d-d021-e427-c3722a0a267a','06ae18de-30dd-4cfc-bf17-b736cb65e074','c59bc909-9380-b17e-3996-543d8ce85638','1ee07543-ffda-4045-8159-45206d9765e2','4306130a-89db-dd68-a4f0-046bc3a18e37','cb73799f-d4a6-55cd-d3fe-569d62c7572b')) [0m
+  [4;35;1mPin Load (0.6ms)[0m   [0mSELECT * FROM "pins" WHERE ("pins"."user_id" = 1) [0m
+  [4;36;1mLastModified Load (3.0ms)[0m   [0;1mSELECT * FROM "last_modifieds" WHERE ("last_modifieds"."eid" IN ('3fd020e2-0dce-4a7c-bf91-5f1ea3dd5e1b','269df0ee-7341-dc5f-096e-8c3c6eb373fe','600a5e10-3ee4-9596-fc2d-9ede6620efd4','6643087c-a4b6-81ab-6432-b1bce72d4ef2','910b2187-57f1-6ab5-95a8-29d6e6d49f4a','8da48ddf-73f6-d7c9-8da3-f7f4044625f4','5f56ac04-d794-818e-bde1-e32ea54ff0fb','af98da5f-6afa-03f9-4530-aa41e15c4417','404b1d8d-8fd0-c703-6269-28c803750652','1f70f4d7-b209-5d01-931e-2de9e2225c3f','355e55cc-83bc-30b2-3e6a-c939020ec67a','acba74f6-92a3-457e-56f6-0c803910e50a','aa2ac085-6317-41d5-a295-15b6cf43890e','b976ca2c-b350-4299-92b9-e04128dc97fc','309acb2a-6d2d-d021-e427-c3722a0a267a','06ae18de-30dd-4cfc-bf17-b736cb65e074','c59bc909-9380-b17e-3996-543d8ce85638','1ee07543-ffda-4045-8159-45206d9765e2','4306130a-89db-dd68-a4f0-046bc3a18e37','cb73799f-d4a6-55cd-d3fe-569d62c7572b')) [0m
+  [4;35;1mCheckedModified Load Including Associations (0.4ms)[0m   [0mSELECT "checked_modifieds"."id" AS t0_r0, "checked_modifieds"."user_id" AS t0_r1, "checked_modifieds"."last_modified_id" AS t0_r2, "checked_modifieds"."checked" AS t0_r3, "checked_modifieds"."created_at" AS t0_r4, "checked_modifieds"."updated_at" AS t0_r5, "last_modifieds"."id" AS t1_r0, "last_modifieds"."eid" AS t1_r1, "last_modifieds"."date" AS t1_r2, "last_modifieds"."created_at" AS t1_r3, "last_modifieds"."updated_at" AS t1_r4 FROM "checked_modifieds" LEFT OUTER JOIN "last_modifieds" ON "last_modifieds".id = "checked_modifieds".last_modified_id WHERE (user_id = 1 and last_modifieds.eid in ('3fd020e2-0dce-4a7c-bf91-5f1ea3dd5e1b','269df0ee-7341-dc5f-096e-8c3c6eb373fe','600a5e10-3ee4-9596-fc2d-9ede6620efd4','6643087c-a4b6-81ab-6432-b1bce72d4ef2','910b2187-57f1-6ab5-95a8-29d6e6d49f4a','8da48ddf-73f6-d7c9-8da3-f7f4044625f4','5f56ac04-d794-818e-bde1-e32ea54ff0fb','af98da5f-6afa-03f9-4530-aa41e15c4417','404b1d8d-8fd0-c703-6269-28c803750652','1f70f4d7-b209-5d01-931e-2de9e2225c3f','355e55cc-83bc-30b2-3e6a-c939020ec67a','acba74f6-92a3-457e-56f6-0c803910e50a','aa2ac085-6317-41d5-a295-15b6cf43890e','b976ca2c-b350-4299-92b9-e04128dc97fc','309acb2a-6d2d-d021-e427-c3722a0a267a','06ae18de-30dd-4cfc-bf17-b736cb65e074','c59bc909-9380-b17e-3996-543d8ce85638','1ee07543-ffda-4045-8159-45206d9765e2','4306130a-89db-dd68-a4f0-046bc3a18e37','cb73799f-d4a6-55cd-d3fe-569d62c7572b')) [0m
+Rendering template within layouts/entry
+Rendering entry/list
+Rendered entry/_entry (3.8ms)
+Rendered entry/_entry (5.5ms)
+Rendered entry/_entry (4.0ms)
+Rendered entry/_entry (4.9ms)
+Rendered entry/_comment (1.5ms)
+Rendered entry/_comment (1.1ms)
+Rendered entry/_comment (1.7ms)
+Rendered entry/_comment (2.0ms)
+Rendered entry/_entry (14.2ms)
+Rendered entry/_entry (3.4ms)
+Rendered entry/_entry (3.6ms)
+Rendered entry/_entry (3.9ms)
+Rendered entry/_entry (3.5ms)
+Rendered entry/_entry (4.7ms)
+Rendered entry/_entry (3.7ms)
+Rendered entry/_entry (4.3ms)
+Rendered entry/_entry (4.5ms)
+Rendered entry/_comment (1.4ms)
+Rendered entry/_comment (1.4ms)
+Rendered entry/_comment (1.9ms)
+Rendered entry/_entry (10.1ms)
+Rendered entry/_entry (4.0ms)
+Rendered entry/_entry (3.3ms)
+Rendered entry/_comment (2.5ms)
+Rendered entry/_comment (2.3ms)
+Rendered entry/_comment (2.7ms)
+Rendered entry/_entry (13.4ms)
+Rendered entry/_comment (1.6ms)
+Rendered entry/_comment (1.5ms)
+Rendered entry/_comment (1.5ms)
+Rendered entry/_comment (1.8ms)
+Rendered entry/_entry (11.7ms)
+Rendered entry/_comment (1.5ms)
+Rendered entry/_comment (0.8ms)
+Rendered entry/_comment (1.6ms)
+Rendered entry/_comment (2.0ms)
+Rendered entry/_entry (11.0ms)
+Rendered entry/_comment (1.5ms)
+Rendered entry/_comment (1.4ms)
+Rendered entry/_comment (1.9ms)
+Rendered entry/_entry (10.7ms)
+Completed in 1224ms (View: 156, DB: 8) | 200 OK [http://b137053.ppp.asahi-net.or.jp/entry/inbox]
+
+
+Processing EntryController#inbox (for 219.125.148.86 at 2009-03-13 05:46:03) [GET]
+  Session ID: c38293db5672cefc0fdc1ee10c1c558a
+  [4;36;1mUser Load (0.5ms)[0m   [0;1mSELECT * FROM "users" WHERE ("users"."id" = 1) [0m
+FriendFeed::APIClient is accessing to https://friendfeed.com/api/feed/home with client -614253418 for kgbu
+getting entries with query: {:service=>nil, :num=>20, :start=>0}
+elapsed: 0.906133 [sec]
+  [4;35;1mPin Load (1.0ms)[0m   [0mSELECT * FROM "pins" WHERE (user_id = 1 and eid in ('3fd020e2-0dce-4a7c-bf91-5f1ea3dd5e1b','269df0ee-7341-dc5f-096e-8c3c6eb373fe','600a5e10-3ee4-9596-fc2d-9ede6620efd4','6643087c-a4b6-81ab-6432-b1bce72d4ef2','910b2187-57f1-6ab5-95a8-29d6e6d49f4a','8da48ddf-73f6-d7c9-8da3-f7f4044625f4','5f56ac04-d794-818e-bde1-e32ea54ff0fb','af98da5f-6afa-03f9-4530-aa41e15c4417','404b1d8d-8fd0-c703-6269-28c803750652','1f70f4d7-b209-5d01-931e-2de9e2225c3f','355e55cc-83bc-30b2-3e6a-c939020ec67a','acba74f6-92a3-457e-56f6-0c803910e50a','aa2ac085-6317-41d5-a295-15b6cf43890e','b976ca2c-b350-4299-92b9-e04128dc97fc','309acb2a-6d2d-d021-e427-c3722a0a267a','06ae18de-30dd-4cfc-bf17-b736cb65e074','c59bc909-9380-b17e-3996-543d8ce85638','1ee07543-ffda-4045-8159-45206d9765e2','4306130a-89db-dd68-a4f0-046bc3a18e37','cb73799f-d4a6-55cd-d3fe-569d62c7572b')) [0m
+  [4;36;1mPin Load (0.6ms)[0m   [0;1mSELECT * FROM "pins" WHERE ("pins"."user_id" = 1) [0m
+  [4;35;1mLastModified Load (2.9ms)[0m   [0mSELECT * FROM "last_modifieds" WHERE ("last_modifieds"."eid" IN ('3fd020e2-0dce-4a7c-bf91-5f1ea3dd5e1b','269df0ee-7341-dc5f-096e-8c3c6eb373fe','600a5e10-3ee4-9596-fc2d-9ede6620efd4','6643087c-a4b6-81ab-6432-b1bce72d4ef2','910b2187-57f1-6ab5-95a8-29d6e6d49f4a','8da48ddf-73f6-d7c9-8da3-f7f4044625f4','5f56ac04-d794-818e-bde1-e32ea54ff0fb','af98da5f-6afa-03f9-4530-aa41e15c4417','404b1d8d-8fd0-c703-6269-28c803750652','1f70f4d7-b209-5d01-931e-2de9e2225c3f','355e55cc-83bc-30b2-3e6a-c939020ec67a','acba74f6-92a3-457e-56f6-0c803910e50a','aa2ac085-6317-41d5-a295-15b6cf43890e','b976ca2c-b350-4299-92b9-e04128dc97fc','309acb2a-6d2d-d021-e427-c3722a0a267a','06ae18de-30dd-4cfc-bf17-b736cb65e074','c59bc909-9380-b17e-3996-543d8ce85638','1ee07543-ffda-4045-8159-45206d9765e2','4306130a-89db-dd68-a4f0-046bc3a18e37','cb73799f-d4a6-55cd-d3fe-569d62c7572b')) [0m
+  [4;36;1mCheckedModified Load Including Associations (0.4ms)[0m   [0;1mSELECT "checked_modifieds"."id" AS t0_r0, "checked_modifieds"."user_id" AS t0_r1, "checked_modifieds"."last_modified_id" AS t0_r2, "checked_modifieds"."checked" AS t0_r3, "checked_modifieds"."created_at" AS t0_r4, "checked_modifieds"."updated_at" AS t0_r5, "last_modifieds"."id" AS t1_r0, "last_modifieds"."eid" AS t1_r1, "last_modifieds"."date" AS t1_r2, "last_modifieds"."created_at" AS t1_r3, "last_modifieds"."updated_at" AS t1_r4 FROM "checked_modifieds" LEFT OUTER JOIN "last_modifieds" ON "last_modifieds".id = "checked_modifieds".last_modified_id WHERE (user_id = 1 and last_modifieds.eid in ('3fd020e2-0dce-4a7c-bf91-5f1ea3dd5e1b','269df0ee-7341-dc5f-096e-8c3c6eb373fe','600a5e10-3ee4-9596-fc2d-9ede6620efd4','6643087c-a4b6-81ab-6432-b1bce72d4ef2','910b2187-57f1-6ab5-95a8-29d6e6d49f4a','8da48ddf-73f6-d7c9-8da3-f7f4044625f4','5f56ac04-d794-818e-bde1-e32ea54ff0fb','af98da5f-6afa-03f9-4530-aa41e15c4417','404b1d8d-8fd0-c703-6269-28c803750652','1f70f4d7-b209-5d01-931e-2de9e2225c3f','355e55cc-83bc-30b2-3e6a-c939020ec67a','acba74f6-92a3-457e-56f6-0c803910e50a','aa2ac085-6317-41d5-a295-15b6cf43890e','b976ca2c-b350-4299-92b9-e04128dc97fc','309acb2a-6d2d-d021-e427-c3722a0a267a','06ae18de-30dd-4cfc-bf17-b736cb65e074','c59bc909-9380-b17e-3996-543d8ce85638','1ee07543-ffda-4045-8159-45206d9765e2','4306130a-89db-dd68-a4f0-046bc3a18e37','cb73799f-d4a6-55cd-d3fe-569d62c7572b')) [0m
+Rendering template within layouts/entry
+Rendering entry/list
+Rendered entry/_entry (3.8ms)
+Rendered entry/_entry (6.7ms)
+Rendered entry/_entry (5.0ms)
+Rendered entry/_entry (4.9ms)
+Rendered entry/_comment (1.7ms)
+Rendered entry/_comment (1.0ms)
+Rendered entry/_comment (1.8ms)
+Rendered entry/_comment (2.0ms)
+Rendered entry/_entry (16.2ms)
+Rendered entry/_entry (4.1ms)
+Rendered entry/_entry (4.0ms)
+Rendered entry/_entry (4.3ms)
+Rendered entry/_entry (4.0ms)
+Rendered entry/_entry (5.7ms)
+Rendered entry/_entry (3.6ms)
+Rendered entry/_entry (5.4ms)
+Rendered entry/_entry (5.4ms)
+Rendered entry/_comment (1.6ms)
+Rendered entry/_comment (1.6ms)
+Rendered entry/_comment (2.1ms)
+Rendered entry/_entry (10.9ms)
+Rendered entry/_entry (4.6ms)
+Rendered entry/_entry (3.7ms)
+Rendered entry/_comment (2.8ms)
+Rendered entry/_comment (2.4ms)
+Rendered entry/_comment (2.8ms)
+Rendered entry/_entry (14.2ms)
+Rendered entry/_comment (1.6ms)
+Rendered entry/_comment (1.6ms)
+Rendered entry/_comment (1.6ms)
+Rendered entry/_comment (2.0ms)
+Rendered entry/_entry (12.9ms)
+Rendered entry/_comment (1.6ms)
+Rendered entry/_comment (1.0ms)
+Rendered entry/_comment (1.7ms)
+Rendered entry/_comment (2.0ms)
+Rendered entry/_entry (11.7ms)
+Rendered entry/_comment (1.6ms)
+Rendered entry/_comment (1.6ms)
+Rendered entry/_comment (2.0ms)
+Rendered entry/_entry (11.5ms)
+Completed in 1224ms (View: 171, DB: 8) | 200 OK [http://b137053.ppp.asahi-net.or.jp/entry/inbox]
+
+
+Processing SettingController#index (for 219.112.209.10 at 2009-03-13 05:46:36) [GET]
+  Session ID: 803996b807aa0e7141cefba46d9d0830
+  [4;35;1mUser Load (0.4ms)[0m   [0mSELECT * FROM "users" WHERE ("users"."id" = 1) [0m
+Rendering template within layouts/setting
+Rendering setting/index
+Completed in 17ms (View: 10, DB: 3) | 200 OK [http://b137053.ppp.asahi-net.or.jp/setting]
+
+
+Processing SettingController#update (for 219.112.209.10 at 2009-03-13 05:46:42) [POST]
+  Session ID: 803996b807aa0e7141cefba46d9d0830
+  Parameters: {"commit"=>"update", "list_view_media_rendering"=>"checked", "authenticity_token"=>"be200775ebba3c03c23d9886759997a1f5c0accd", "entries_in_page"=>"20", "font_size"=>"11", "entries_in_thread"=>"4", "text_folding_size"=>"140"}
+  [4;36;1mUser Load (0.5ms)[0m   [0;1mSELECT * FROM "users" WHERE ("users"."id" = 1) [0m
+Redirected to controllerentryactionlist
+Completed in 8ms (DB: 4) | 302 Found [http://b137053.ppp.asahi-net.or.jp/setting/update]
+
+
+Processing EntryController#list (for 219.112.209.10 at 2009-03-13 05:46:42) [GET]
+  Session ID: 803996b807aa0e7141cefba46d9d0830
+  [4;35;1mUser Load (0.5ms)[0m   [0mSELECT * FROM "users" WHERE ("users"."id" = 1) [0m
+FriendFeed::APIClient is accessing to https://friendfeed.com/api/feed/home with client -614856028 for kgbu
+getting entries with query: {:service=>nil, :num=>20, :start=>0}
+elapsed: 0.895308 [sec]
+  [4;36;1mPin Load (0.9ms)[0m   [0;1mSELECT * FROM "pins" WHERE (user_id = 1 and eid in ('3fd020e2-0dce-4a7c-bf91-5f1ea3dd5e1b','269df0ee-7341-dc5f-096e-8c3c6eb373fe','600a5e10-3ee4-9596-fc2d-9ede6620efd4','6643087c-a4b6-81ab-6432-b1bce72d4ef2','910b2187-57f1-6ab5-95a8-29d6e6d49f4a','8da48ddf-73f6-d7c9-8da3-f7f4044625f4','5f56ac04-d794-818e-bde1-e32ea54ff0fb','af98da5f-6afa-03f9-4530-aa41e15c4417','404b1d8d-8fd0-c703-6269-28c803750652','1f70f4d7-b209-5d01-931e-2de9e2225c3f','355e55cc-83bc-30b2-3e6a-c939020ec67a','acba74f6-92a3-457e-56f6-0c803910e50a','aa2ac085-6317-41d5-a295-15b6cf43890e','b976ca2c-b350-4299-92b9-e04128dc97fc','309acb2a-6d2d-d021-e427-c3722a0a267a','06ae18de-30dd-4cfc-bf17-b736cb65e074','c59bc909-9380-b17e-3996-543d8ce85638','1ee07543-ffda-4045-8159-45206d9765e2','4306130a-89db-dd68-a4f0-046bc3a18e37','cb73799f-d4a6-55cd-d3fe-569d62c7572b')) [0m
+Rendering template within layouts/entry
+Rendering entry/list
+Rendered entry/_entry (4.1ms)
+Rendered entry/_entry (5.4ms)
+Rendered entry/_entry (3.8ms)
+Rendered entry/_entry (5.1ms)
+Rendered entry/_comment (1.7ms)
+Rendered entry/_comment (1.0ms)
+Rendered entry/_comment (1.9ms)
+Rendered entry/_comment (2.3ms)
+Rendered entry/_entry (14.6ms)
+Rendered entry/_entry (3.3ms)
+Rendered entry/_entry (3.3ms)
+Rendered entry/_entry (3.7ms)
+Rendered entry/_entry (3.5ms)
+Rendered entry/_entry (4.7ms)
+Rendered entry/_entry (3.1ms)
+Rendered entry/_entry (4.3ms)
+Rendered entry/_entry (4.7ms)
+Rendered entry/_comment (1.7ms)
+Rendered entry/_comment (1.6ms)
+Rendered entry/_comment (2.1ms)
+Rendered entry/_entry (10.5ms)
+Rendered entry/_entry (3.6ms)
+Rendered entry/_entry (3.6ms)
+Rendered entry/_comment (2.6ms)
+Rendered entry/_comment (2.3ms)
+Rendered entry/_comment (2.8ms)
+Rendered entry/_entry (13.2ms)
+Rendered entry/_comment (1.6ms)
+Rendered entry/_comment (1.6ms)
+Rendered entry/_comment (1.5ms)
+Rendered entry/_comment (2.0ms)
+Rendered entry/_entry (11.9ms)
+Rendered entry/_comment (1.6ms)
+Rendered entry/_comment (1.0ms)
+Rendered entry/_comment (1.7ms)
+Rendered entry/_comment (1.9ms)
+Rendered entry/_entry (10.9ms)
+Rendered entry/_comment (1.7ms)
+Rendered entry/_comment (1.7ms)
+Rendered entry/_comment (1.9ms)
+Rendered entry/_entry (11.0ms)
+Completed in 1140ms (View: 158, DB: 4) | 200 OK [http://b137053.ppp.asahi-net.or.jp/entry/list]
+
+
+Processing EntryController#list (for 219.112.209.10 at 2009-03-13 05:52:39) [GET]
+  Session ID: 803996b807aa0e7141cefba46d9d0830
+  [4;36;1mUser Load (0.5ms)[0m   [0;1mSELECT * FROM "users" WHERE ("users"."id" = 1) [0m
+FriendFeed::APIClient is accessing to https://friendfeed.com/api/feed/home with client -615364598 for kgbu
+getting entries with query: {:service=>nil, :num=>20, :start=>0}
+elapsed: 0.95369 [sec]
+  [4;35;1mPin Load (27.2ms)[0m   [0mSELECT * FROM "pins" WHERE (user_id = 1 and eid in ('3fd020e2-0dce-4a7c-bf91-5f1ea3dd5e1b','269df0ee-7341-dc5f-096e-8c3c6eb373fe','600a5e10-3ee4-9596-fc2d-9ede6620efd4','6643087c-a4b6-81ab-6432-b1bce72d4ef2','910b2187-57f1-6ab5-95a8-29d6e6d49f4a','8da48ddf-73f6-d7c9-8da3-f7f4044625f4','5f56ac04-d794-818e-bde1-e32ea54ff0fb','af98da5f-6afa-03f9-4530-aa41e15c4417','404b1d8d-8fd0-c703-6269-28c803750652','1f70f4d7-b209-5d01-931e-2de9e2225c3f','355e55cc-83bc-30b2-3e6a-c939020ec67a','acba74f6-92a3-457e-56f6-0c803910e50a','aa2ac085-6317-41d5-a295-15b6cf43890e','b976ca2c-b350-4299-92b9-e04128dc97fc','309acb2a-6d2d-d021-e427-c3722a0a267a','06ae18de-30dd-4cfc-bf17-b736cb65e074','c59bc909-9380-b17e-3996-543d8ce85638','1ee07543-ffda-4045-8159-45206d9765e2','4306130a-89db-dd68-a4f0-046bc3a18e37','cb73799f-d4a6-55cd-d3fe-569d62c7572b')) [0m
+Rendering template within layouts/entry
+Rendering entry/list
+Rendered entry/_entry (4.5ms)
+Rendered entry/_entry (5.7ms)
+Rendered entry/_entry (3.9ms)
+Rendered entry/_entry (5.0ms)
+Rendered entry/_comment (1.7ms)
+Rendered entry/_comment (1.0ms)
+Rendered entry/_comment (1.7ms)
+Rendered entry/_comment (1.9ms)
+Rendered entry/_entry (14.4ms)
+Rendered entry/_entry (3.3ms)
+Rendered entry/_entry (3.5ms)
+Rendered entry/_entry (3.8ms)
+Rendered entry/_entry (3.6ms)
+Rendered entry/_entry (4.7ms)
+Rendered entry/_entry (77.8ms)
+Rendered entry/_entry (4.8ms)
+Rendered entry/_entry (4.5ms)
+Rendered entry/_comment (1.6ms)
+Rendered entry/_comment (1.7ms)
+Rendered entry/_comment (2.1ms)
+Rendered entry/_entry (10.9ms)
+Rendered entry/_entry (3.7ms)
+Rendered entry/_entry (3.4ms)
+Rendered entry/_comment (2.4ms)
+Rendered entry/_comment (2.2ms)
+Rendered entry/_comment (2.7ms)
+Rendered entry/_entry (12.6ms)
+Rendered entry/_comment (1.6ms)
+Rendered entry/_comment (1.6ms)
+Rendered entry/_comment (1.5ms)
+Rendered entry/_comment (1.9ms)
+Rendered entry/_entry (11.8ms)
+Rendered entry/_comment (1.6ms)
+Rendered entry/_comment (0.9ms)
+Rendered entry/_comment (1.7ms)
+Rendered entry/_comment (2.2ms)
+Rendered entry/_entry (11.2ms)
+Rendered entry/_comment (1.5ms)
+Rendered entry/_comment (1.4ms)
+Rendered entry/_comment (1.9ms)
+Rendered entry/_entry (10.5ms)
+Completed in 1382ms (View: 268, DB: 40) | 200 OK [http://b137053.ppp.asahi-net.or.jp/entry/list]
+
+
+Processing EntryController#list (for 219.112.209.10 at 2009-03-13 05:52:56) [GET]
+  Session ID: 803996b807aa0e7141cefba46d9d0830
+  [4;36;1mUser Load (0.5ms)[0m   [0;1mSELECT * FROM "users" WHERE ("users"."id" = 1) [0m
+FriendFeed::APIClient is accessing to https://friendfeed.com/api/feed/home with client -614770178 for kgbu
+getting entries with query: {:service=>nil, :num=>20, :start=>0}
+elapsed: 0.898178 [sec]
+  [4;35;1mPin Load (1.0ms)[0m   [0mSELECT * FROM "pins" WHERE (user_id = 1 and eid in ('3fd020e2-0dce-4a7c-bf91-5f1ea3dd5e1b','269df0ee-7341-dc5f-096e-8c3c6eb373fe','600a5e10-3ee4-9596-fc2d-9ede6620efd4','6643087c-a4b6-81ab-6432-b1bce72d4ef2','910b2187-57f1-6ab5-95a8-29d6e6d49f4a','8da48ddf-73f6-d7c9-8da3-f7f4044625f4','5f56ac04-d794-818e-bde1-e32ea54ff0fb','af98da5f-6afa-03f9-4530-aa41e15c4417','404b1d8d-8fd0-c703-6269-28c803750652','1f70f4d7-b209-5d01-931e-2de9e2225c3f','355e55cc-83bc-30b2-3e6a-c939020ec67a','acba74f6-92a3-457e-56f6-0c803910e50a','aa2ac085-6317-41d5-a295-15b6cf43890e','b976ca2c-b350-4299-92b9-e04128dc97fc','309acb2a-6d2d-d021-e427-c3722a0a267a','06ae18de-30dd-4cfc-bf17-b736cb65e074','c59bc909-9380-b17e-3996-543d8ce85638','1ee07543-ffda-4045-8159-45206d9765e2','4306130a-89db-dd68-a4f0-046bc3a18e37','cb73799f-d4a6-55cd-d3fe-569d62c7572b')) [0m
+Rendering template within layouts/entry
+Rendering entry/list
+Rendered entry/_entry (4.1ms)
+Rendered entry/_entry (5.5ms)
+Rendered entry/_entry (3.8ms)
+Rendered entry/_entry (4.5ms)
+Rendered entry/_comment (1.6ms)
+Rendered entry/_comment (1.0ms)
+Rendered entry/_comment (1.4ms)
+Rendered entry/_comment (2.0ms)
+Rendered entry/_entry (13.6ms)
+Rendered entry/_entry (3.4ms)
+Rendered entry/_entry (3.4ms)
+Rendered entry/_entry (3.5ms)
+Rendered entry/_entry (3.3ms)
+Rendered entry/_entry (4.8ms)
+Rendered entry/_entry (3.2ms)
+Rendered entry/_entry (4.2ms)
+Rendered entry/_entry (4.4ms)
+Rendered entry/_comment (1.6ms)
+Rendered entry/_comment (1.5ms)
+Rendered entry/_comment (2.1ms)
+Rendered entry/_entry (10.4ms)
+Rendered entry/_entry (3.7ms)
+Rendered entry/_entry (3.6ms)
+Rendered entry/_comment (2.4ms)
+Rendered entry/_comment (2.1ms)
+Rendered entry/_comment (2.7ms)
+Rendered entry/_entry (12.9ms)
+Rendered entry/_comment (1.3ms)
+Rendered entry/_comment (1.4ms)
+Rendered entry/_comment (1.5ms)
+Rendered entry/_comment (1.9ms)
+Rendered entry/_entry (10.9ms)
+Rendered entry/_comment (1.3ms)
+Rendered entry/_comment (0.8ms)
+Rendered entry/_comment (1.4ms)
+Rendered entry/_comment (2.0ms)
+Rendered entry/_entry (9.6ms)
+Rendered entry/_comment (1.3ms)
+Rendered entry/_comment (1.3ms)
+Rendered entry/_comment (1.7ms)
+Rendered entry/_entry (9.6ms)
+Completed in 1137ms (View: 152, DB: 4) | 200 OK [http://b137053.ppp.asahi-net.or.jp/entry/list]
+
+
+Processing EntryController#list (for 219.112.209.10 at 2009-03-13 05:53:19) [GET]
+  Session ID: 803996b807aa0e7141cefba46d9d0830
+  Parameters: {"num"=>"20", "start"=>"20"}
+  [4;36;1mUser Load (0.6ms)[0m   [0;1mSELECT * FROM "users" WHERE ("users"."id" = 1) [0m
+FriendFeed::APIClient is accessing to https://friendfeed.com/api/feed/home with client -613960628 for kgbu
+getting entries with query: {:service=>nil, :num=>20, :start=>20}
+elapsed: 0.943931 [sec]
+  [4;35;1mPin Load (0.6ms)[0m   [0mSELECT * FROM "pins" WHERE (user_id = 1 and eid in ('d6f79638-032e-4340-b70a-c677933b5ad2','85ab9a60-9573-a032-6755-e0590a864104','cee3aa08-1936-a89e-2eea-39807d4a9e62','1e7e366d-d2fe-4d90-ae7c-13e6e17dc589','bb16dc4e-22bd-4dbd-8cfa-04a4b00f86ea','3b520182-9d89-4207-a3bf-d79b7b645a82','fdd62486-de05-9c65-996e-93517d4d5ee9','93cd8916-2763-6261-c6ff-a2a16d97f3fe','06a47f7d-5363-8f24-624d-101b478d8c08','9e480ed5-2e34-9409-0481-ec6584ebf8b2','332c5539-a519-4215-a428-309cd6af4a9c','f777030b-cea4-5552-dfb6-9962445aaf72','5a803272-3da9-f4e9-e51a-8b4ff776f806','eea1975d-ab43-43ae-905d-d704d603ac6a','f2a3f350-d791-f221-e73d-b6280fc557a8','6adf1aad-2106-0570-9d16-4a5359de9397','12de36dd-3aa4-ec1b-a746-d362fde671dc','0765c328-5153-c23c-e996-5aa2d44888aa','9c34c61f-7072-99d2-296d-6bfdffb9b3c0','81f57ddc-e52b-5f2c-c3aa-91335fa854fb')) [0m
+Rendering template within layouts/entry
+Rendering entry/list
+Rendered entry/_entry (4.5ms)
+Rendered entry/_entry (3.0ms)
+Rendered entry/_comment (2.3ms)
+Rendered entry/_entry (9.3ms)
+Rendered entry/_comment (1.7ms)
+Rendered entry/_comment (2.1ms)
+Rendered entry/_entry (7.9ms)
+Rendered entry/_comment (1.5ms)
+Rendered entry/_comment (2.4ms)
+Rendered entry/_comment (1.5ms)
+Rendered entry/_comment (2.0ms)
+Rendered entry/_entry (11.9ms)
+Rendered entry/_comment (1.7ms)
+Rendered entry/_comment (1.5ms)
+Rendered entry/_comment (1.8ms)
+Rendered entry/_entry (9.8ms)
+Rendered entry/_entry (3.8ms)
+Rendered entry/_entry (3.8ms)
+Rendered entry/_entry (4.2ms)
+Rendered entry/_entry (4.1ms)
+Rendered entry/_entry (4.1ms)
+Rendered entry/_comment (1.6ms)
+Rendered entry/_comment (2.9ms)
+Rendered entry/_entry (9.4ms)
+Rendered entry/_entry (4.4ms)
+Rendered entry/_entry (3.4ms)
+Rendered entry/_entry (4.4ms)
+Rendered entry/_entry (4.0ms)
+Rendered entry/_entry (4.5ms)
+Rendered entry/_entry (4.1ms)
+Rendered entry/_entry (4.1ms)
+Rendered entry/_comment (1.6ms)
+Rendered entry/_comment (1.1ms)
+Rendered entry/_comment (2.2ms)
+Rendered entry/_comment (2.0ms)
+Rendered entry/_entry (12.3ms)
+Completed in 1181ms (View: 148, DB: 4) | 200 OK [http://b137053.ppp.asahi-net.or.jp/entry/list?num=20&start=20]
+
+
+Processing EntryController#search (for 219.112.209.10 at 2009-03-13 05:54:36) [GET]
+  Session ID: 803996b807aa0e7141cefba46d9d0830
+  Parameters: {"friends"=>"me"}
+  [4;36;1mUser Load (0.5ms)[0m   [0;1mSELECT * FROM "users" WHERE ("users"."id" = 1) [0m
+Rendering template within layouts/entry
+Rendering entry/search
+FriendFeed::APIClient is accessing to https://friendfeed.com/api/user/kgbu/profile with client -615581498 for kgbu
+elapsed: 0.732798 [sec]
+Completed in 769ms (View: 761, DB: 3) | 200 OK [http://b137053.ppp.asahi-net.or.jp/entry/search?friends=me]
+
+
+Processing EntryController#list (for 219.112.209.10 at 2009-03-13 05:54:55) [GET]
+  Session ID: 803996b807aa0e7141cefba46d9d0830
+  Parameters: {"user"=>"", "commit"=>"search", "friends"=>"gotoken", "service"=>"", "query"=>"読書メーター", "room"=>""}
+  [4;35;1mUser Load (0.5ms)[0m   [0mSELECT * FROM "users" WHERE ("users"."id" = 1) [0m
+FriendFeed::APIClient is accessing to https://friendfeed.com/api/feed/search with client -613812088 for kgbu
+getting entries with query: {:q=>"読書メーター", :friends=>"gotoken", :service=>nil, :room=>nil, :num=>20, :from=>nil, :start=>0}
+elapsed: 1.069395 [sec]
+  [4;36;1mPin Load (0.7ms)[0m   [0;1mSELECT * FROM "pins" WHERE (user_id = 1 and eid in ('1b4fe206-ebfc-e1fe-ea8b-3ccae2b26462','678b9985-4d59-45eb-bd68-e305d742926e','38afd725-0a21-4805-ac3c-758d5f042501','f1680876-0b0a-c879-fc93-4d620f07623d','c094c1fe-791e-47a8-8e6c-17010f49ca47','6e73448c-68f0-343e-bfa5-f3a0c93b909b')) [0m
+Rendering template within layouts/entry
+Rendering entry/list
+FriendFeed::APIClient is accessing to https://friendfeed.com/api/user/gotoken/profile with client -613812088 for kgbu
+elapsed: 0.737229 [sec]
+Rendered entry/_profile (766.6ms)
+Rendered entry/_comment (1.6ms)
+Rendered entry/_comment (2.1ms)
+Rendered entry/_entry (11.2ms)
+Rendered entry/_entry (4.1ms)
+Rendered entry/_comment (1.6ms)
+Rendered entry/_comment (2.0ms)
+Rendered entry/_entry (8.2ms)
+Rendered entry/_entry (4.6ms)
+Rendered entry/_comment (1.6ms)
+Rendered entry/_comment (1.1ms)
+Rendered entry/_comment (1.6ms)
+Rendered entry/_comment (2.0ms)
+Rendered entry/_entry (12.0ms)
+Rendered entry/_entry (4.5ms)
+Completed in 2060ms (View: 849, DB: 3) | 200 OK [http://b137053.ppp.asahi-net.or.jp/entry/list?query=%E8%AA%AD%E6%9B%B8%E3%83%A1%E3%83%BC%E3%82%BF%E3%83%BC&user=&room=&friends=gotoken&service=&commit=search]
+
+
+Processing EntryController#show (for 219.112.209.10 at 2009-03-13 05:55:17) [GET]
+  Session ID: 803996b807aa0e7141cefba46d9d0830
+  Parameters: {"id"=>"c094c1fe-791e-47a8-8e6c-17010f49ca47"}
+  [4;35;1mUser Load (0.4ms)[0m   [0mSELECT * FROM "users" WHERE ("users"."id" = 1) [0m
+FriendFeed::APIClient is accessing to https://friendfeed.com/api/feed/entry/c094c1fe-791e-47a8-8e6c-17010f49ca47 with client -615043688 for kgbu
+getting entries with query: {}
+elapsed: 0.732559 [sec]
+  [4;36;1mPin Load (0.6ms)[0m   [0;1mSELECT * FROM "pins" WHERE (user_id = 1 and eid in ('c094c1fe-791e-47a8-8e6c-17010f49ca47')) [0m
+Rendering template within layouts/entry
+Rendering entry/list
+Rendered entry/_comment (1.7ms)
+Rendered entry/_comment (1.6ms)
+Rendered entry/_comment (1.8ms)
+Rendered entry/_comment (1.6ms)
+Rendered entry/_comment (1.8ms)
+Rendered entry/_comment (1.8ms)
+Rendered entry/_comment (1.6ms)
+Rendered entry/_comment (1.7ms)
+Rendered entry/_entry (25.8ms)
+Completed in 830ms (View: 48, DB: 3) | 200 OK [http://b137053.ppp.asahi-net.or.jp/entry/show/c094c1fe-791e-47a8-8e6c-17010f49ca47]
+
+
+Processing EntryController#list (for 219.112.209.10 at 2009-03-13 05:56:01) [GET]
+  Session ID: 803996b807aa0e7141cefba46d9d0830
+  Parameters: {"user"=>"", "commit"=>"search", "friends"=>"me", "service"=>"", "query"=>"読書メーター", "room"=>""}
+  [4;35;1mUser Load (0.5ms)[0m   [0mSELECT * FROM "users" WHERE ("users"."id" = 1) [0m
+FriendFeed::APIClient is accessing to https://friendfeed.com/api/feed/search with client -613806908 for kgbu
+getting entries with query: {:q=>"読書メーター", :friends=>"me", :service=>nil, :room=>nil, :num=>20, :from=>nil, :start=>0}
+elapsed: 0.981691 [sec]
+  [4;36;1mPin Load (0.6ms)[0m   [0;1mSELECT * FROM "pins" WHERE (user_id = 1 and eid in ('5a803272-3da9-f4e9-e51a-8b4ff776f806','1b4fe206-ebfc-e1fe-ea8b-3ccae2b26462','38afd725-0a21-4805-ac3c-758d5f042501','7f4c5de9-7497-f4d9-d187-3317f2e76892','c094c1fe-791e-47a8-8e6c-17010f49ca47','65386c9f-d2c9-49f2-a03c-174ab06575ea')) [0m
+Rendering template within layouts/entry
+Rendering entry/list
+Rendered entry/_entry (4.9ms)
+Rendered entry/_comment (1.9ms)
+Rendered entry/_comment (1.9ms)
+Rendered entry/_entry (10.5ms)
+Rendered entry/_comment (1.4ms)
+Rendered entry/_comment (1.9ms)
+Rendered entry/_entry (7.0ms)
+Rendered entry/_entry (4.2ms)
+Rendered entry/_comment (1.6ms)
+Rendered entry/_comment (1.0ms)
+Rendered entry/_comment (1.4ms)
+Rendered entry/_comment (1.9ms)
+Rendered entry/_entry (11.5ms)
+Rendered entry/_comment (1.7ms)
+Rendered entry/_comment (1.0ms)
+Rendered entry/_comment (1.8ms)
+Rendered entry/_comment (2.3ms)
+Rendered entry/_entry (11.8ms)
+Completed in 1207ms (View: 76, DB: 3) | 200 OK [http://b137053.ppp.asahi-net.or.jp/entry/list?query=%E8%AA%AD%E6%9B%B8%E3%83%A1%E3%83%BC%E3%82%BF%E3%83%BC&user=&room=&friends=me&service=&commit=search]
