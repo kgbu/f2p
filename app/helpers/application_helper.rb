@@ -35,6 +35,10 @@ module ApplicationHelper
     'top' => 'arrow_up.png',
   }
 
+  def self_label
+    SELF_LABEL
+  end
+
   def icon_url(name)
     F2P::Config.icon_url_base + ICON_NAME[name.to_s]
   end
@@ -59,28 +63,6 @@ module ApplicationHelper
 
   def logout_link
     link_to(icon_tag(:logout), :controller => 'login', :action => 'clear')
-  end
-
-  def write_with_geocode_link_or_form
-    if setting.use_gps_info
-      title = 'get GPS data'
-    end
-    if setting.use_gps_info == 'ezweb'
-      title + '<a href="device:location?url=new"><img alt="world add" height="16" src="/images/icons/map.png" title="world add" width="16" /></a>'
-    elsif setting.use_gps_info == 'gpsone'
-      title + '<a href="device:gpsone?url=new&ver=1&datum=0&unit=0"><img alt="world add" height="16" src="/images/icons/map.png" title="world add" width="16" />
-</a>'
-    elsif setting.use_gps_info == 'DoCoMoFOMA'
-      title + '<a href="new" lcs><img alt="world add" height="16" src="/images/icons/map.png" title="world add" width="16" /></a>'
-    elsif setting.use_gps_info == 'DoCoMomova'
-      title + '<form><input type="submit" name="navi_pos" value=""></form>'
-    elsif setting.use_gps_info == 'SoftBank3G'
-      title + '<a href="location:auto?new"><img alt="world add" height="16" src="/images/icons/map.png" title="world add" width="16" /></a>'
-    elsif setting.use_gps_info == 'SoftBankold'
-      title + '<a href="new" z><img alt="world add" height="16" src="/images/icons/map.png" title="world add" width="16" /></a>'
-    elsif setting.use_gps_info == 'WILLCOM'
-      title + '<a href="http://location.request/dummy.cgi?my=new&pos=$location"><img alt="world add" height="16" src="/images/icons/map.png" title="world add" width="16" /></a>'
-    end
   end
 
   def u(arg)
@@ -138,7 +120,7 @@ module ApplicationHelper
     user_id = User.ff_id(:auth => auth, :user => nickname)
     name = User.ff_name(:auth => auth, :user => nickname)
     if nickname == auth.name
-      name = SELF_LABEL
+      name = self_label
     end
     image_url = User.picture_url(:auth => auth, :user => nickname, :size => size)
     url = User.ff_url(:auth => auth, :user => nickname)
@@ -150,7 +132,7 @@ module ApplicationHelper
     nickname = v(user, 'nickname')
     name = v(user, 'name')
     if nickname == auth.name
-      name = SELF_LABEL
+      name = self_label
     end
     link_to(h(name), :controller => 'entry', :action => 'list', :user => u(nickname || user_id))
   end

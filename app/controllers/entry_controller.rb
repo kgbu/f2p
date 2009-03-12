@@ -241,10 +241,12 @@ class EntryController < ApplicationController
           :redirect_to => {:action => 'list'}
 
   def show
-    @ctx = restore_ctx { |ctx|
-      ctx.eid = param(:id)
-      ctx.home = false
-    }
+    @ctx = EntryContext.new(@auth)
+    @ctx.eid = param(:id)
+    @ctx.home = false
+    if ctx = session[:ctx]
+      ctx.eid = @ctx.eid
+    end
     @entries = EntryThread.find(@ctx.find_opt) || []
     render :action => 'list'
   end
@@ -257,59 +259,12 @@ class EntryController < ApplicationController
     @link = param(:link)
     @with_form = param(:with_form)
     @title = param(:title)
-
-    @lon = param(:lon)
     @lat = param(:lat)
-
-    def calc_geo(m_s_sss)
-      sign = ""
-      if /([-\+])?(\d{1,3})\.(\d{1,2})\.(\d{1,2})\.(\d{1,3})/ =~ m_s_sss then
-        sign = $1
-        m_s_sss = (((($5.to_f/1000) + $4.to_f)/60 + $3.to_f)/60 + $2.to_f)
-        if sign == "-" then
-          (m_s_sss * -1 ).to_s
-        else
-          m_s_sss.to_s
-        end
-      else
-        m_s_sss
-      end
-    end
- 
-    case @setting.use_gps_info
-    when 'ezweb', 'gpsone', 'DoCoMoFOMA' 
-      @lat = calc_geo(@lat)
-      @lon = calc_geo(@lon)
-    when 'DoCoMomova','SoftBank3G','WILLCOM'
-      if /\A([NS])([0-9\.]+)([EW])([0-9\.]+)\Z/ =~ param(:pos)
-        if $1 == 'N'
-          @lat = calc_geo($2)
-        else
-          @lat = calc_geo('-' + $2)
-        end
-        if $3 == 'E'
-          @lon = calc_geo($4)
-        else
-          @lon = calc_geo('-' + $4)
-        end
-      end
-    when 'SoftBankold'
-      if /\A(\d+) (\d+) / =~ (request.env['HTTP_X_JPHONE_GEOCODE']).to_s
-        @lat = $1
-        @lon = $2
-      end
-    end
-        
-    @long = param(:long) || @lon
+    @long = param(:long)
     @address = param(:address)
+    @zoom = (param(:zoom) || F2P::Config.google_maps_zoom).to_i
     @placemark = nil
-    if @lon
-      geocoder = GoogleMaps::GoogleGeocoder.new(http_client, F2P::Config.google_maps_api_key)
-      @placemark = geocoder.reversesearch(@lat, @lon)
-      if @placemark and !@placemark.ambiguous?
-        @address = @placemark.address
-      end
-    elsif @title
+    if @title
       geocoder = GoogleMaps::GeocodingJpGeocoder.new(http_client)
       @placemark = geocoder.search(@title)
       if @placemark and !@placemark.ambiguous?
@@ -364,10 +319,11 @@ class EntryController < ApplicationController
     @long = param(:long)
     @title = param(:title)
     @address = param(:address)
+    @zoom = (param(:zoom) || F2P::Config.google_maps_zoom).to_i
     opt = create_opt(:room => @ctx.room)
     if @lat and @long and @address
       generator = GoogleMaps::URLGenerator.new
-      image_url = generator.staticmap_url(F2P::Config.google_maps_maptype, @lat, @long, :zoom => F2P::Config.google_maps_zoom, :width => F2P::Config.google_maps_width, :height => F2P::Config.google_maps_height)
+      image_url = generator.staticmap_url(F2P::Config.google_maps_maptype, @lat, @long, :zoom => @zoom, :width => F2P::Config.google_maps_width, :height => F2P::Config.google_maps_height)
       image_link = generator.link_url(@lat, @long, @address)
       (opt[:images] ||= []) << [image_url, image_link]
       @body += " ([map] #{@address})"
@@ -464,7 +420,7 @@ class EntryController < ApplicationController
       Entry.add_like(create_opt(:id => id))
     end
     flash[:keep_ctx] = true
-    redirect_to_list
+    redirect_to_entry_or_list
   end
 
   verify :only => :unlike,
@@ -479,7 +435,7 @@ class EntryController < ApplicationController
       Entry.delete_like(create_opt(:id => id))
     end
     flash[:keep_ctx] = true
-    redirect_to_list
+    redirect_to_entry_or_list
   end
 
   verify :only => :pin,
@@ -495,7 +451,7 @@ class EntryController < ApplicationController
       clear_checked_modified(id)
     end
     flash[:keep_ctx] = true
-    redirect_to_list
+    redirect_to_entry_or_list
   end
 
   verify :only => :unpin,
@@ -511,7 +467,7 @@ class EntryController < ApplicationController
       commit_checked_modified(id)
     end
     flash[:keep_ctx] = true
-    redirect_to_list
+    redirect_to_entry_or_list
   end
 
 private
@@ -558,6 +514,15 @@ private
   end
 
   def redirect_to_list
+    if ctx = @ctx || session[:ctx]
+      ctx.eid = nil
+      redirect_to ctx.link_opt
+    else
+      redirect_to :action => 'list'
+    end
+  end
+
+  def redirect_to_entry_or_list
     if ctx = @ctx || session[:ctx]
       redirect_to ctx.link_opt
     else

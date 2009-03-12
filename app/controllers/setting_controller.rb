@@ -15,13 +15,12 @@ class SettingController < ApplicationController
     @list_view_media_rendering = param(:list_view_media_rendering) || @setting.list_view_media_rendering
     @link_open_new_window = param(:link_open_new_window) || @setting.link_open_new_window
     @link_type = param(:link_type) || @setting.link_type
-    @use_gps_info = param(:use_gps_info) || @setting.use_gps_info
   end
 
   def update
     updated = false
     original_value = {}
-    [:font_size, :entries_in_page, :entries_in_thread, :text_folding_size, :list_view_media_rendering, :link_open_new_window, :link_type, :use_gps_info].each do |key|
+    [:font_size, :entries_in_page, :entries_in_thread, :text_folding_size, :list_view_media_rendering, :link_open_new_window, :link_type].each do |key|
       original_value[key] = @setting.send(key)
     end
     # int settings
@@ -38,7 +37,6 @@ class SettingController < ApplicationController
     if param(:link_type_gwt) == 'checked'
       @setting.link_type = 'gwt'
     end
-    @setting.use_gps_info = param(:use_gps_info)
     if errors = @setting.validate
       original_value.each do |key, value|
         @setting.send(key.to_s + '=', value)

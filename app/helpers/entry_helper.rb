@@ -189,12 +189,12 @@ module EntryHelper
     link
   end
 
-  def google_maps_link(point, entry = nil)
+  def google_maps_link(point, zoom = nil, entry = nil)
     generator = GoogleMaps::URLGenerator.new(F2P::Config.google_maps_api_key)
     lat = point.lat
     long = point.long
     address = point.address
-    tb = generator.staticmap_url(F2P::Config.google_maps_maptype, lat, long, :zoom => F2P::Config.google_maps_zoom, :width => F2P::Config.google_maps_width, :height => F2P::Config.google_maps_height)
+    tb = generator.staticmap_url(F2P::Config.google_maps_maptype, lat, long, :zoom => zoom || F2P::Config.google_maps_zoom, :width => F2P::Config.google_maps_width, :height => F2P::Config.google_maps_height)
     link = generator.link_url(lat, long, address)
     link_to(media_tag(entry, tb, :alt => h(address), :title => h(address), :size => image_size(F2P::Config.google_maps_width, F2P::Config.google_maps_height)), link)
   end
@@ -204,7 +204,7 @@ module EntryHelper
     long = v(entry, 'geo', 'long')
     if lat and long
       point = GoogleMaps::Point.new(entry.title, lat, long)
-      content = google_maps_link(point, entry)
+      content = google_maps_link(point, nil, entry)
       if !entry.medias.empty?
         common + ' ' + content
       else
@@ -336,7 +336,21 @@ module EntryHelper
   end
 
   def user(entry)
-    super(v(entry, 'user'))
+    user = v(entry, 'user')
+    if v(entry, 'service') and entry.service_id == 'twitter'
+      if nickname = v(user, 'nickname')
+        name = v(user, 'name')
+        tw_name = (v(user, 'profileUrl') || '').sub(/\A.*\//, '')
+        if name != tw_name
+          if nickname == auth.name
+            name = self_label
+          end
+          name += "(#{tw_name})"
+          return link_to(h(name), :controller => 'entry', :action => 'list', :user => u(nickname))
+        end
+      end
+    end
+    super(user)
   end
 
   def comment_icon(by_self = false)
@@ -350,6 +364,14 @@ module EntryHelper
       str += link_to(icon_tag(:more), :action => 'show', :id => u(comment.entry.id))
     end
     str
+  end
+
+  def inline_comment(comment)
+    if v(comment, 'date') != v(comment.entry, 'updated')
+      comment(comment) + ' ' + date(v(comment, 'date'), true)
+    else
+      comment(comment)
+    end
   end
 
   def search_form
@@ -389,7 +411,7 @@ module EntryHelper
   end
 
   def search_link
-    link_to(icon_tag(:search), search_opt)
+    link_to(icon_tag(:search), search_opt(:controller => 'entry', :action => 'search'))
   end
 
   def service_links(user)
@@ -423,6 +445,21 @@ module EntryHelper
         link_to(h(label), list_opt(:action => 'list', :list => u(nickname)))
       end
     }
+  end
+
+  def zoom_select_tag(varname, default)
+    candidates = (0..19).map { |e| [e, e] }
+    select_tag(varname, options_for_select(candidates, default))
+  end
+
+  def room_select_tag(varname, default)
+    arg = {
+      :auth => auth,
+      :user => auth.name
+    }
+    candidates = User.rooms(arg).map { |e| [v(e, 'name'), v(e, 'nickname')] }
+    candidates.unshift([nil, nil])
+    select_tag(varname, options_for_select(candidates, default))
   end
 
   def room_links(user)
@@ -622,7 +659,7 @@ module EntryHelper
   end
 
   def search_opt(hash = {})
-    search_opt = list_opt.merge(:controller => 'entry', :action => 'search')
+    search_opt = list_opt(hash)
     search_opt[:friends] = 'me' if ctx.home
     search_opt[:room] = nil if search_opt[:room] == '*'
     search_opt

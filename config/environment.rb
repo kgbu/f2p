@@ -32,7 +32,6 @@ module F2P
       attr_accessor :service_grouping_threashold
       attr_accessor :link_open_new_window
       attr_accessor :link_type # nil or 'gwt'
-      attr_accessor :use_gps_info
       attr_accessor :updated_expiration
       attr_accessor :list_view_media_rendering
       attr_accessor :max_friend_list_num
@@ -108,11 +107,11 @@ Rails::Initializer.run do |config|
   F2P::Config.cipher_algorithm = 'AES-256-CBC'
   F2P::Config.cipher_block_size = 16 # must match with above alg.
   F2P::Config.encryption_key = "]\023\312\203}\271i\244X\002\374O\241\221/\323\277\005\323HN\216\021\253\320W\314S\206m\a\221"
-  F2P::Config.google_maps_api_key = ''
+  F2P::Config.google_maps_api_key = 'ABQIAAAAdVdSy2DzDmHMH1bXxnwNoBTxVWsZbFvwrxBn_7Xeqv6XJoYe9hRzzQJ_x4w_khWe6biy7NfsDzkwPA'
   F2P::Config.icon_url_base = '/images/icons/'
 
   F2P::Config.google_maps_maptype = 'mobile'
-  F2P::Config.google_maps_zoom = 13
+  F2P::Config.google_maps_zoom = 12
   F2P::Config.google_maps_width = 160
   F2P::Config.google_maps_height = 80
 
@@ -124,7 +123,6 @@ Rails::Initializer.run do |config|
   F2P::Config.service_grouping_threashold = 5400
   F2P::Config.link_open_new_window = false
   F2P::Config.link_type = 'gwt'
-  F2P::Config.use_gps_info = ''
   F2P::Config.updated_expiration = 5400
   F2P::Config.list_view_media_rendering = true
   F2P::Config.max_friend_list_num = 50
